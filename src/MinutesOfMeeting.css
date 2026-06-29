@@ -1,0 +1,18 @@
+.mom-wrap { padding: 48px 52px; font-family: 'Outfit', sans-serif; width: 100%; max-width: none; }
+.mom-inner { width: min(100%, 1120px); }
+.mom-title { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 700; color: #E0E2EB; margin-bottom: 6px; }
+.mom-sub { font-size: 13px; color: #3D4165; margin-bottom: 34px; }
+.mom-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; }
+.mom-card { background: #0B0D22; border: 1px solid rgba(212,168,83,0.1); border-radius: 18px; padding: 28px; }
+.mom-card-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #4A5178; font-weight: 500; margin-bottom: 18px; }
+.mom-line { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(212,168,83,0.07); }
+.mom-line:last-child { border-bottom: 0; }
+.mom-num { width: 28px; height: 28px; border-radius: 8px; background: rgba(212,168,83,0.1); color: #D4A853; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.mom-line-title { color: #C8CAD8; font-size: 14px; font-weight: 500; margin-bottom: 5px; }
+.mom-line-detail { color: #5C638C; font-size: 12.5px; line-height: 1.5; }
+.mom-area { width: 100%; min-height: 280px; resize: vertical; background: #07091A; border: 1px solid rgba(212,168,83,0.1); border-radius: 12px; color: #C8CAD8; padding: 16px; font-family: 'Outfit', sans-serif; line-height: 1.6; outline: none; }
+.mom-actions { display: flex; gap: 10px; margin-top: 16px; }
+.mom-btn { flex: 1; padding: 11px; border-radius: 10px; border: 1px solid rgba(212,168,83,0.18); background: transparent; color: #7A6840; font-family: 'Outfit', sans-serif; cursor: pointer; font-weight: 500; }
+.mom-btn.primary { background: linear-gradient(135deg, #D4A853, #B8892C); color: #07091A; border-color: transparent; font-weight: 700; }
+.mom-side-item { padding: 13px 14px; border-radius: 10px; background: #07091A; border: 1px solid rgba(212,168,83,0.07); color: #A8AAB8; font-size: 13px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.mom-side-item span { color: #D4A853; font-size: 11px; }

@@ -1,0 +1,156 @@
+.meeting-page {
+  min-height: 100vh;
+  padding: 32px 24px;
+  box-sizing: border-box;
+  font-family: "DM Sans", "Segoe UI", sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* ======================
+   DARK THEME
+====================== */
+
+.theme-dark {
+  background: #06081a;
+  color: #f4f0ff;
+}
+
+.theme-dark .panel,
+.theme-dark .card {
+  background: #090c22;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ======================
+   LIGHT THEME
+====================== */
+
+.theme-light {
+  background: #f5f7fb;
+  color: #1f2937;
+}
+
+.theme-light .panel,
+.theme-light .card {
+  background: #ffffff;
+  border: 1px solid #dbe3f0;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.theme-light h1,
+.theme-light h2,
+.theme-light h3,
+.theme-light h4,
+.theme-light h5,
+.theme-light h6 {
+  color: #111827;
+}
+
+.theme-light p,
+.theme-light span,
+.theme-light div {
+  color: inherit;
+}
+
+/* ======================
+   TOGGLE BUTTON
+====================== */
+
+.theme-toggle-btn {
+  border: none;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.25s ease;
+}
+
+.theme-dark .theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.theme-light .theme-toggle-btn {
+  background: #111827;
+  color: white;
+}
+
+/* ======================
+   ADD CIRCULAR BUTTON
+====================== */
+
+.add-circular-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 999px;
+  padding: 10px 18px;
+  cursor: pointer;
+  font-weight: 700;
+  border: none;
+}
+
+.theme-dark .add-circular-btn {
+  background: rgba(212, 168, 83, 0.12);
+  color: #d4a853;
+}
+
+.theme-light .add-circular-btn {
+  background: #eef4ff;
+  color: #2563eb;
+}
+
+.add-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.theme-dark .add-circle {
+  background: rgba(212, 168, 83, 0.18);
+}
+
+.theme-light .add-circle {
+  background: rgba(37, 99, 235, 0.15);
+}
+
+/* ======================
+   TAB BADGE
+====================== */
+
+.count-badge {
+  margin-left: 8px;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11px;
+}
+
+.theme-dark .count-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #7a83b8;
+}
+
+.theme-light .count-badge {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+/* ======================
+   INPUTS
+====================== */
+
+.theme-light input,
+.theme-light textarea,
+.theme-light select {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #d6dce8 !important;
+}
+
+.theme-light input::placeholder,
+.theme-light textarea::placeholder {
+  color: #6b7280;
+}

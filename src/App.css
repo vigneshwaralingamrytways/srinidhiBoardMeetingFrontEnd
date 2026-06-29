@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { min-height: 100%; background: #07091A; }
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(212,168,83,0.25); border-radius: 99px; }
+
+.app-root {
+  display: flex;
+  min-height: 100vh;
+  background: #07091A;
+  color: #E0E2EB;
+  font-family: 'Outfit', sans-serif;
+}
+
+.app-content {
+  margin-left: 240px;
+  flex: 1;
+  width: calc(100% - 240px);
+  min-height: 100vh;
+}

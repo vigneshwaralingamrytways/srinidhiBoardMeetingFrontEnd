@@ -1,0 +1,890 @@
+/* -- CSS VARIABLES ------------------------------------------- */
+:root {
+  --font-mono: "JetBrains Mono", "Fira Mono", "Courier New", monospace;
+  --font-display: "Cormorant Garamond", "Garamond", Georgia, serif;
+  --font-head: "Bebas Neue", "Impact", sans-serif;
+
+  --bg: #07090e;
+  --bg2: #0c0f17;
+  --bg3: #111520;
+  --bg4: #1a1f2e;
+
+  --border: #1e2435;
+  --border2: #252b3b;
+  --border3: #2e3548;
+
+  --text: #e8e4dc;
+  --text2: #a8a49c;
+  --text3: #5c5a56;
+
+  --gold: #c9a252;
+  --gold-dim: #8a6e38;
+
+  --teal: #1d9e75;
+  --blue: #378add;
+  --amber: #ba7517;
+  --red: #e05252;
+}
+
+/* -- RESET / BASE -------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* -- ANIMATIONS ---------------------------------------------- */
+@keyframes cmFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cmPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* -- MEMBER PROFILE ROOT ------------------------------------- */
+.member-profile-root {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+/* -- TOPBAR -------------------------------------------------- */
+.member-profile-topbar {
+  padding: 0 32px;
+  height: 64px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  background: var(--bg2);
+}
+
+.member-profile-topbar__subtitle {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.member-profile-topbar__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.member-profile-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.member-profile-topbar__divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+}
+
+.member-profile-topbar__date {
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+}
+
+/* Add Member (+) button */
+.member-profile-add-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: background 0.15s, color 0.15s;
+}
+
+.member-profile-add-btn:hover {
+  background: rgba(201, 162, 82, 0.12);
+}
+
+/* -- PAGE BODY ----------------------------------------------- */
+.member-profile-body {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* -- CARD GRID ----------------------------------------------- */
+.member-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  padding: 24px 32px;
+}
+
+/* -- USER CARD ----------------------------------------------- */
+.member-profile-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  animation: cmFadeUp 0.3s ease both;
+}
+
+.member-profile-card:hover {
+  border-color: rgba(201, 162, 82, 0.5);
+}
+
+/* Card header */
+.member-profile-card__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.member-profile-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--gold);
+  background: var(--bg3);
+  flex-shrink: 0;
+}
+
+.member-profile-card__info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.member-profile-card__name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.member-profile-card__email {
+  font-size: 11px;
+  color: var(--text3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-profile-card__dept {
+  display: inline-block;
+  font-size: 10px;
+  background: var(--bg4);
+  color: var(--text3);
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+/* Card action buttons */
+.member-profile-card__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.member-profile-card__action-btn {
+  background: none;
+  border: 1px solid var(--border2);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.member-profile-card__action-btn--gold {
+  color: var(--gold);
+}
+
+.member-profile-card__action-btn--muted {
+  color: var(--text3);
+}
+
+.member-profile-card__action-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Card section divider */
+.member-profile-card__section {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.member-profile-card__section+.member-profile-card__section {
+  margin-top: 14px;
+}
+
+.member-profile-card__section-label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.member-profile-card__summary-row {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+
+/* Company access inside card */
+.member-profile-card__company-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-profile-card__company-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.member-profile-card__company-logo {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.member-profile-card__company-name {
+  font-size: 11px;
+  color: var(--text2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-profile-card__role-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.member-profile-card__more {
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+/* -- MODAL OVERLAY ------------------------------------------- */
+.member-profile-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(5, 7, 11, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: cmFadeUp 0.18s ease both;
+}
+
+/* -- MODAL BOX ----------------------------------------------- */
+.member-profile-modal {
+  width: min(560px, 100%);
+  max-height: 88vh;
+  overflow: auto;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+  position: relative;
+}
+
+.member-profile-modal__header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg3);
+}
+
+.member-profile-modal__subtitle {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.member-profile-modal__title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.member-profile-modal__close {
+  background: none;
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.member-profile-modal__close:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.member-profile-modal__body {
+  padding: 24px;
+}
+
+/* -- FORM FIELD ---------------------------------------------- */
+.member-profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.member-profile-field__label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+
+.member-profile-input {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 11px 12px;
+  font-size: 12px;
+  outline: none;
+  border-radius: 0;
+  width: 100%;
+  font-family: var(--font-mono);
+  transition: border-color 0.15s;
+}
+
+.member-profile-input:focus {
+  border-color: var(--gold);
+}
+
+.member-profile-textarea {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 11px 12px;
+  font-size: 12px;
+  outline: none;
+  border-radius: 0;
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+  font-family: var(--font-mono);
+  transition: border-color 0.15s;
+}
+
+.member-profile-textarea:focus {
+  border-color: var(--gold);
+}
+
+.member-profile-select {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 11px 12px;
+  font-size: 12px;
+  outline: none;
+  border-radius: 0;
+  width: 100%;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: border-color 0.15s;
+}
+
+.member-profile-select:focus {
+  border-color: var(--gold);
+}
+
+/* Form grid */
+.member-profile-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* -- SIGNATURE PAD ------------------------------------------- */
+.member-profile-signature-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin: 24px 0 12px;
+}
+
+.member-profile-signature-canvas {
+  width: 100%;
+  height: 130px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  display: block;
+  touch-action: none;
+}
+
+.member-profile-signature-clear {
+  background: none;
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  padding: 7px 12px;
+  font-size: 10px;
+  margin-top: 8px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.member-profile-signature-clear:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* -- MODAL FOOTER BUTTONS ------------------------------------ */
+.member-profile-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.member-profile-btn {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 10px 14px;
+  font-size: 11px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.member-profile-btn--cancel {
+  background: none;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+}
+
+.member-profile-btn--cancel:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.member-profile-btn--primary {
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  color: var(--bg);
+  padding: 10px 18px;
+}
+
+.member-profile-btn--primary:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold-dim);
+}
+
+.member-profile-btn--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* -- ERROR TEXT ---------------------------------------------- */
+.member-profile-error {
+  font-size: 12px;
+  color: var(--red);
+  margin-top: 16px;
+  letter-spacing: 0.05em;
+}
+
+/* -- USER DETAILS MODAL SPECIFIC ----------------------------- */
+.member-profile-details__user-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.member-profile-details__avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--gold);
+  background: var(--bg3);
+  flex-shrink: 0;
+}
+
+.member-profile-details__email {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.member-profile-details__dept {
+  font-size: 10px;
+  background: var(--bg4);
+  color: var(--text3);
+  padding: 3px 10px;
+  border-radius: 2px;
+  letter-spacing: 0.08em;
+}
+
+.member-profile-details__section-title {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.member-profile-details__info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.member-profile-details__info-item {
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  padding: 10px 12px;
+}
+
+.member-profile-details__info-item-label {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.member-profile-details__info-item-value {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.member-profile-details__signature-box {
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  padding: 12px;
+  min-height: 96px;
+}
+
+.member-profile-details__signature-img {
+  max-width: 100%;
+  height: 90px;
+  object-fit: contain;
+  display: block;
+}
+
+.member-profile-details__sig-empty {
+  font-size: 12px;
+  color: var(--text3);
+  font-style: italic;
+}
+
+/* Company role access inside details modal */
+.member-profile-details__roles-box {
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.member-profile-details__roles-empty {
+  font-size: 12px;
+  color: var(--text3);
+  font-style: italic;
+}
+
+.member-profile-details__role-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.member-profile-details__role-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-profile-details__co-logo {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.member-profile-details__co-name {
+  font-size: 12px;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.member-profile-details__co-industry {
+  font-size: 10px;
+  color: var(--text3);
+}
+
+.member-profile-details__role-pill {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 2px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* -- DISCLOSURE MODAL SPECIFIC ------------------------------- */
+.member-profile-disclosure__layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 18px;
+}
+
+.member-profile-disclosure__list-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.member-profile-disclosure__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 420px;
+  overflow: auto;
+}
+
+.member-profile-disclosure__list-empty {
+  font-size: 12px;
+  color: var(--text3);
+  font-style: italic;
+}
+
+.member-profile-disclosure__list-item {
+  text-align: left;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 12px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  transition: border-color 0.15s;
+}
+
+.member-profile-disclosure__list-item:hover {
+  border-color: var(--gold);
+}
+
+.member-profile-disclosure__item-name {
+  font-size: 12px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.member-profile-disclosure__item-sub {
+  font-size: 10px;
+  color: var(--text3);
+}
+
+/* -- TOAST --------------------------------------------------- */
+.member-profile-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 50;
+  background: var(--bg3);
+  border: 1px solid rgba(201, 162, 82, 0.5);
+  border-left: 3px solid var(--gold);
+  color: var(--text);
+  padding: 14px 18px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  animation: cmFadeUp 0.25s ease both;
+  max-width: 360px;
+}
+
+.member-profile-toast__label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.member-profile-toast__message {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+/* -- LOADING STATE ------------------------------------------- */
+.member-profile-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  font-size: 13px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+/* -- SCROLLBAR STYLING --------------------------------------- */
+.member-profile-body::-webkit-scrollbar,
+.member-profile-modal::-webkit-scrollbar,
+.member-profile-disclosure__list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.member-profile-body::-webkit-scrollbar-track,
+.member-profile-modal::-webkit-scrollbar-track,
+.member-profile-disclosure__list::-webkit-scrollbar-track {
+  background: var(--bg2);
+}
+
+.member-profile-body::-webkit-scrollbar-thumb,
+.member-profile-modal::-webkit-scrollbar-thumb,
+.member-profile-disclosure__list::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 2px;
+}
+
+.member-profile-body::-webkit-scrollbar-thumb:hover,
+.member-profile-modal::-webkit-scrollbar-thumb:hover,
+.member-profile-disclosure__list::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dim);
+}
+
+.mp-light {
+  --bg: #F5F3EF;
+  --bg2: #ECEAE4;
+  --bg3: #E3E0D8;
+  --bg4: #D9D5CB;
+  --border: #00000012;
+  --border2: #00000022;
+  --border3: #A0732A30;
+  --text: #1A1714;
+  --text2: #4A4640;
+  --text3: #8A8680;
+  --gold: #A0732A;
+  --gold-dim: #7A551F;
+  --teal: #0F6E56;
+  --blue: #185FA5;
+  --amber: #854F0B;
+  --red: #A32D2D;
+}
+
+.mp-light .member-profile-input,
+.mp-light .member-profile-textarea,
+.mp-light .member-profile-select {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.14);
+  color: #1A1714;
+}
+
+.mp-light .member-profile-modal {
+  background: #ECEAE4;
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+.mp-light .member-profile-modal__header {
+  background: #E3E0D8;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.mp-light .member-profile-card {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.mp-light .member-profile-topbar {
+  background: #ECEAE4;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid #2a3553 !important;
+  transition: background-color 9999s ease-in-out 0s;
+}

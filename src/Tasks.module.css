@@ -1,0 +1,171 @@
+.panel {
+  background: #0d1024;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 18px;
+  padding: 26px;
+  margin-bottom: 18px; 
+}
+.panelHead { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.heading   { font-size: 16px; font-weight: 800; color: #f4f0ff; margin: 0 0 3px; }
+.sub       { font-size: 11px; color: #596197; margin: 0; }
+
+.statChips { display: flex; gap: 8px; flex-wrap: wrap; }
+.statChip  { background: #080b1d; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; }
+.statDot   { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.statLabel { font-size: 11px; color: #596197; }
+.statNum   { font-size: 14px; font-weight: 800; color: #f4f0ff; }
+
+/* progress */
+.overallProgress { margin-bottom: 22px; }
+.progressLabelRow { display: flex; justify-content: space-between; margin-bottom: 7px; }
+.progressLabelText { font-size: 10px; color: #596197; letter-spacing: 0.1em; font-weight: 700; }
+.progressPct  { font-size: 12px; font-weight: 800; color: #4ade80; }
+.progressTrack { height: 5px; background: rgba(255,255,255,0.05); border-radius: 99px; overflow: hidden; margin-bottom: 5px; }
+.progressFill  { height: 100%; background: linear-gradient(90deg,#4ade80,#22d3ee); border-radius: 99px; transition: width 0.5s ease; }
+.progressStripes { display: flex; gap: 3px; }
+.stripe { flex: 1; height: 3px; border-radius: 99px; opacity: 0.8; }
+
+/* filter bar */
+.filterBar { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.filterBtn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); color: #596197; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+.filterBtn:hover { border-color: rgba(212,168,83,0.22); }
+.filterActive { background: #d4a853 !important; border-color: #d4a853 !important; color: #060919 !important; font-weight: 800; }
+.filterDot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.filterCnt { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 1px 6px; font-size: 10px; font-weight: 700; }
+.filterActive .filterCnt { background: rgba(0,0,0,0.15); color: #060919; }
+
+.groupSel { background: #080b1d; border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; padding: 6px 10px; color: #7a83b8; font-size: 11px; outline: none; cursor: pointer; }
+
+/* empty */
+.empty { text-align: center; padding: 60px 24px; }
+.emptyIcon  { font-size: 28px; margin-bottom: 12px; opacity: 0.5; }
+.emptyTitle { font-size: 14px; font-weight: 700; color: #4f578f; margin-bottom: 7px; }
+.emptySub   { font-size: 11px; color: #3d4570; line-height: 1.7; }
+
+/* groups */
+.taskListWrap { display: flex; flex-direction: column; gap: 0; }
+.group { margin-bottom: 22px; }
+.groupHead { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.groupTitle { font-size: 10px; font-weight: 800; letter-spacing: 0.15em; }
+.groupCnt   { background: rgba(255,255,255,0.06); color: #7a83b8; font-size: 9px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+
+/* task rows */
+.taskRow {
+  display: flex; align-items: center; gap: 13px;
+  background: #080b1d; border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 13px 15px; margin-bottom: 8px;
+}
+.statusDot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.taskBody  { flex: 1; min-width: 0; }
+.taskTopRow { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
+.taskTitle  { font-size: 13px; font-weight: 600; color: #f4f0ff; }
+.srcBadge   { font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; }
+.taskMeta   { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.assigneeChip { display: flex; align-items: center; gap: 5px; }
+.miniAv     { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: 7px; font-weight: 800; color: #fff; flex-shrink: 0; }
+.muted      { font-size: 11px; color: #596197; }
+.statusSel  { background: #0d1024; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 4px 8px; color: #8b93c8; font-size: 10px; outline: none; cursor: pointer; min-width: 100px; }
+
+/* TaskSection (inline in Agenda/Resolutions/Decisions) */
+.taskSection { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; }
+.tsSectionHead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.tsSectionLeft { display: flex; align-items: center; gap: 7px; }
+.tsIcon  { font-size: 12px; color: #d4a853; }
+.tsLabel { font-size: 9px; font-weight: 800; letter-spacing: 0.16em; color: #596197; display: flex; align-items: center; gap: 6px; }
+.tsCnt   { background: rgba(212,168,83,0.14); color: #d4a853; font-size: 9px; padding: 1px 7px; border-radius: 20px; font-weight: 800; }
+.tsToggleBtn { background: transparent; border: 1px solid rgba(255,255,255,0.08); border-radius: 5px; padding: 3px 9px; color: #596197; font-size: 10px; cursor: pointer; }
+.tsAddRow { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.tsAddMeta { display: flex; gap: 8px; flex-wrap: wrap; }
+.tsInp { background: #060919; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 11px; color: #f4f0ff; font-size: 12px; outline: none; flex: 1; box-sizing: border-box; }
+.tsInp:focus { border-color: rgba(212,168,83,0.35); }
+.tsEmpty { font-size: 11px; color: #3d4570; font-style: italic; padding: 4px 0 8px; }
+.tsList  { display: flex; flex-direction: column; gap: 7px; }
+.tsTaskRow { display: flex; align-items: center; gap: 10px; background: #060919; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 10px 12px; }
+.removeBtn { background: transparent; border: none; color: #3d4570; font-size: 11px; cursor: pointer; padding: 2px 5px; flex-shrink: 0; transition: color 0.18s; }
+.removeBtn:hover { color: #f87171; }
+
+.goldBtn { background: #d4a853; border: none; border-radius: 7px; padding: 8px 16px; color: #060919; font-size: 12px; font-weight: 800; cursor: pointer; transition: opacity 0.18s; white-space: nowrap; }
+.goldBtn:hover { opacity: 0.84; }
+
+/* Theme Toggle */
+
+.themeBtn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.25s ease;
+}
+
+/* Dark Theme */
+
+.darkTheme {
+  background: #0d1024;
+  color: #f4f0ff;
+}
+
+.darkTheme .themeBtn {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+/* Light Theme */
+
+.lightTheme {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #dbe3f0;
+}
+
+.lightTheme .themeBtn {
+  background: #111827;
+  color: #fff;
+}
+
+/* Panel Content */
+
+.lightTheme .heading,
+.lightTheme .taskTitle,
+.lightTheme .statNum {
+  color: #111827;
+}
+
+.lightTheme .sub,
+.lightTheme .muted,
+.lightTheme .statLabel,
+.lightTheme .progressLabelText {
+  color: #6b7280;
+}
+
+.lightTheme .taskRow,
+.lightTheme .tsTaskRow,
+.lightTheme .statChip,
+.lightTheme .groupSel {
+  background: #f8fafc;
+  border-color: #dbe3f0;
+}
+
+.lightTheme .filterBtn {
+  background: #ffffff;
+  color: #374151;
+  border-color: #dbe3f0;
+}
+
+.lightTheme .statusSel,
+.lightTheme .tsInp {
+  background: #ffffff;
+  color: #111827;
+  border-color: #dbe3f0;
+}
+
+.lightTheme .progressTrack {
+  background: #e5e7eb;
+}
+
+.lightTheme .groupCnt,
+.lightTheme .filterCnt {
+  background: #e5e7eb;
+  color: #374151;
+}

@@ -1,0 +1,289 @@
+.br-wrap { padding: 48px 52px; font-family: 'Outfit', sans-serif; width: 100%; max-width: none; }
+.br-inner { width: min(100%, 1120px); }
+.br-title { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 700; color: #E0E2EB; margin-bottom: 6px; }
+.br-sub { font-size: 13px; color: #3D4165; margin-bottom: 34px; }
+.br-toolbar { display: flex; gap: 12px; margin-bottom: 22px; }
+.br-btn { padding: 11px 18px; border-radius: 10px; border: 1px solid rgba(212,168,83,0.2); color: #D4A853; background: rgba(212,168,83,0.06); font-family: 'Outfit', sans-serif; cursor: pointer; font-weight: 600; }
+.br-btn.primary { background: linear-gradient(135deg, #D4A853, #B8892C); color: #07091A; border-color: transparent; }
+.br-card { background: #0B0D22; border: 1px solid rgba(212,168,83,0.1); border-radius: 18px; padding: 28px; margin-bottom: 18px; }
+.br-head { display: flex; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+.br-name { font-size: 17px; color: #E0E2EB; font-weight: 500; margin-bottom: 6px; }
+.br-decision { font-size: 13px; color: #6A7198; line-height: 1.5; }
+.br-status { height: fit-content; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; padding: 5px 12px; border-radius: 99px; color: #D4A853; background: rgba(212,168,83,0.12); border: 1px solid rgba(212,168,83,0.2); }
+.br-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.br-small { padding: 9px 13px; border-radius: 9px; border: 1px solid rgba(212,168,83,0.16); background: #07091A; color: #A8936A; font-family: 'Outfit', sans-serif; cursor: pointer; }
+.br-votes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+.br-vote-box { background: #07091A; border: 1px solid rgba(212,168,83,0.08); border-radius: 12px; padding: 13px; }
+.br-vote-num { font-family: 'Cormorant Garamond', serif; color: #D4A853; font-size: 24px; font-weight: 700; }
+.br-vote-label { font-size: 10px; color: #4A5178; text-transform: uppercase; letter-spacing: 1px; }
+.br-success {
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(77, 184, 150, 0.12);
+  border: 1px solid rgba(77, 184, 150, 0.2);
+  color: #4DB896;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.br-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 5, 16, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.br-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #0B0D22;
+  border: 1px solid rgba(212,168,83,0.12);
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+
+.br-modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  color: #E0E2EB;
+  margin-bottom: 22px;
+  font-weight: 700;
+}
+
+.br-input,
+.br-textarea {
+  width: 100%;
+  background: #07091A;
+  border: 1px solid rgba(212,168,83,0.1);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #E0E2EB;
+  font-family: 'Outfit', sans-serif;
+  margin-bottom: 16px;
+  outline: none;
+}
+
+.br-input::placeholder,
+.br-textarea::placeholder {
+  color: #5D6388;
+}
+
+.br-textarea {
+  min-height: 120px;
+  resize: none;
+}
+
+.br-input:focus,
+.br-textarea:focus {
+  border-color: rgba(212,168,83,0.35);
+}
+
+.br-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+.br-modal {
+  position: relative;
+}
+
+.br-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  color: #f3f4f6;
+  background: #111827;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.br-close:hover {
+  /* background: #e5e7eb; */
+  transform: rotate(90deg);
+}
+/* =========================
+   RICH TEXT EDITOR
+========================= */
+
+.rich-wrap {
+  border: 1px solid #1c2840;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0d1120;
+  margin-top: 4px;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+
+.rich-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 10px 12px;
+
+  border-bottom: 1px solid #1c2840;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(17,24,39,1),
+      rgba(13,17,32,1)
+    );
+
+  flex-wrap: wrap;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.rich-btn {
+  width: 34px;
+  height: 34px;
+
+  border-radius: 8px;
+
+  border: 1px solid rgba(232,184,75,0.12);
+
+  background: rgba(232,184,75,0.05);
+
+  color: #e8b84b;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.2s ease;
+}
+
+.rich-btn:hover {
+  background: rgba(232,184,75,0.14);
+  border-color: rgba(232,184,75,0.24);
+}
+
+/* =========================
+   DIVIDER
+========================= */
+
+.rich-divider {
+  width: 1px;
+  height: 20px;
+
+  background: rgba(255,255,255,0.08);
+
+  margin: 0 2px;
+}
+
+/* =========================
+   EDITOR
+========================= */
+
+.rich-editor {
+  min-height: 140px;
+
+  padding: 14px 16px;
+
+  font-size: 14px;
+  line-height: 1.7;
+
+  color: #e8eaf0;
+
+  outline: none;
+
+  overflow-y: auto;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: plaintext !important;
+
+  caret-color: #e8b84b;
+}
+
+/* =========================
+   PLACEHOLDER
+========================= */
+
+.rich-editor:empty::before {
+  content: attr(data-placeholder);
+
+  color: #5d6a88;
+
+  pointer-events: none;
+
+  display: block;
+}
+
+/* =========================
+   LISTS
+========================= */
+
+.rich-editor ul,
+.rich-editor ol {
+  padding-left: 22px;
+  margin: 10px 0;
+}
+
+.rich-editor li {
+  margin-bottom: 6px;
+}
+
+/* =========================
+   FORMATTING
+========================= */
+
+.rich-editor b,
+.rich-editor strong {
+  font-weight: 700;
+}
+
+.rich-editor i {
+  font-style: italic;
+}
+
+.rich-editor u {
+  text-decoration: underline;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+.rich-editor::-webkit-scrollbar {
+  width: 6px;
+}
+
+.rich-editor::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.rich-editor::-webkit-scrollbar-thumb {
+  background: rgba(232,184,75,0.25);
+  border-radius: 999px;
+}
+
+.rich-editor::-webkit-scrollbar-thumb:hover {
+  background: rgba(232,184,75,0.4);
+}

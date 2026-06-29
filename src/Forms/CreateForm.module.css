@@ -1,0 +1,270 @@
+.horizontal {
+  display: flex;
+  align-items: center;
+  background-color: #307cb6;
+}
+
+.horizontallabel{
+  font-size: 1.4rem !important;
+  background-color: #000;
+  color: white;
+  min-height: 30px;
+  margin: 0px;
+  border: 1px solid white;
+}
+.horizontalText {
+/*  border: none;
+  border-bottom: 1px solid black;
+  outline: none;
+  margin-bottom: 15px; */
+  font-size: 1.5rem;
+  border-radius: 0%;
+ /*  box-shadow: inset 1px 2px 8px rgba(0, 0, 0, 0.07); */
+ /*  border-radius: 0%;
+  background-color: transparent;
+  padding: 0px; */
+  height: 30px !important;
+  
+/*  width: 9rem !important; */
+}
+
+.horizontalText:focus {
+  /* border: none;
+  border-bottom: 1px solid rgb(119, 118, 117);
+  border: none;
+  outline: none; 
+  box-shadow: none; 
+  background-color: transparent;  */
+  /*box-shadow: inset 0px 6px 6px 6px #cbced1, 
+  inset -6px -6px 6px white; */
+}
+
+.btn{
+    
+    width:max-content;
+    display: flex;
+   margin-top: .5rem;;
+    margin-bottom:10px;
+    margin-left: 1.5rem;
+   
+}
+
+.formcon{
+    width: 100%;
+    height:max-content;
+   
+    padding:.5em;   
+  /* background-color: #E6E6E6;   */
+
+  background-color: transparent;  
+   
+    
+}
+.header{
+    text-align: center;
+}
+.formholder{
+    width: 100%;
+    padding:0%;
+    height:fit-content;
+    display:flex;
+    margin:0%;
+    
+    
+   
+}
+.lebels{
+  margin: 0px;
+  font-size: 1rem;
+}
+
+.label{
+    height:38px;
+}
+
+.btnextra{
+    margin-top: 30px;
+}
+
+.title{
+    display:flex;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+    background-color: #170462;
+    color: aliceblue;
+    height: 3em;
+   
+    
+   
+    
+}
+.tlhead{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+
+
+  
+.formmainRow{
+  width: 100%;
+}
+  .formBorder {
+    border: none;
+    border-bottom: 1px solid black;
+    outline: none;
+    margin-bottom: 15px;
+    font-size: .95rem;
+    border-radius: 0%;
+    background-color: transparent;
+    padding: 0px;
+    height: 40px !important;
+    
+  /*  width: 9rem !important; */
+  }
+ 
+  .formBorder:focus {
+    border: none;
+    border-bottom: 1px solid rgb(119, 118, 117);
+    border: none;
+    outline: none; /* Remove any additional outline */
+    box-shadow: none; /* Remove any additional box-shadow */
+    background-color: transparent; 
+    /*box-shadow: inset 0px 6px 6px 6px #cbced1, 
+    inset -6px -6px 6px white; */
+  }
+  .checkboxContainer {
+  position: relative;
+ 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Updated CSS for the checkbox using the class name */
+.checkbox {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #c6c6c6;
+  border-radius: 20px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, .2);
+  transition: .5s;
+}
+
+.checkbox:checked {
+  background: #03a9f4;
+}
+
+.checkbox:before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  background: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.39);
+  transition: .5s;
+}
+
+.checkbox:checked:before {
+  left: 20px;
+}
+
+/* Styles for the lock icon */
+.lockIcon {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 5px; /* Adjusted for vertical centering within the circle */
+  left: 5px; /* Adjusted for horizontal centering within the circle */
+  color: #000;
+  transition: .5s;
+}
+
+/* Adjusted styles for the lock icon in the checked state */
+.checkbox:checked + .lockIcon {
+  left: 25px; /* Adjusted for the locked state */
+  transition: 0.5s;
+}
+
+/* Dynamic   New Style */
+
+  .formBorderNew{
+    border: none;
+    outline: none; 
+    font-size: .90rem;
+    border-radius: 1rem;
+    width: 95%;
+    border-radius: 5px solid (to right, #141a1d, #71ce07); 
+   
+  }
+  .formBorderNew:focus{
+    
+    box-shadow: inset 6px 6px 6px #cbced1, 
+    inset -6px -6px 6px white;
+    transition: box-shadow .2s ease-in-out; 
+  }
+  .BookingItemsForm{
+    background-color: #d6d6d6;
+   
+    border-radius: 1rem;
+   
+  }
+
+  .BookingItemsForm:focus{
+    border: none;
+    outline: none; 
+    background: #ecf0f3;
+    box-shadow: inset 6px 6px 6px #cbced1, 
+    inset -6px -6px 6px white;
+    transition: box-shadow .25s ease-in-out; 
+    border: 2px solid #307cb6;
+    transition: border 5s ease-in-out;
+  }
+
+ 
+
+  
+  .enquiryForm {
+    border: none;
+    border-bottom: 1px solid black;
+    outline: none;
+    margin-bottom: 15px;
+    font-size: .95rem;
+    border-radius: 0%;
+    background: transparent;
+    padding: 0px;
+    height: 40px !important;
+    background: linear-gradient(black 0 0) bottom / 0% 1px no-repeat #cccccc00;
+    transition: background-size 1s;
+   box-shadow: 0 0 10px 15px;
+  }
+  
+  .enquiryForm:hover{
+    border: none;
+    outline: none;
+    background-size: 100% 1px;
+    box-shadow: none; /* Add this line to remove any box-shadow */
+   box-shadow: 0 0 10px 15px;
+  }
+  .enquiryForm:focus {
+    border: none;
+    outline: none;
+    box-shadow: 0px 11px 11px -10px transparent;
+    background-size: 0% 0px;
+    background-color: transparent;
+   box-shadow: 0 0 10px 15px;
+  }
+  

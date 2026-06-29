@@ -1,0 +1,37 @@
+.vt-wrap { padding: 48px 52px; font-family: 'Outfit', sans-serif; width: 100%; max-width: none; }
+.vt-inner { width: min(100%, 980px); }
+.vt-title { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 700; color: #E0E2EB; margin-bottom: 6px; }
+.vt-sub { font-size: 13px; color: #3D4165; margin-bottom: 44px; }
+.vt-tabs { display: flex; gap: 4px; margin-bottom: 32px; background: #0B0D22; border-radius: 12px; padding: 5px; border: 1px solid rgba(212,168,83,0.08); width: fit-content; }
+.vt-tab { padding: 9px 24px; border-radius: 9px; font-size: 13px; color: #4A5178; cursor: pointer; transition: all 0.2s; font-weight: 500; }
+.vt-tab.vt-active { background: rgba(212,168,83,0.12); color: #D4A853; }
+.vt-card { background: #0B0D22; border: 1px solid rgba(212,168,83,0.1); border-radius: 18px; padding: 30px; margin-bottom: 20px; }
+.vt-vote-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; }
+.vt-vote-title { font-size: 17px; color: #E0E2EB; font-weight: 500; margin-bottom: 6px; }
+.vt-vote-status { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; padding: 5px 13px; border-radius: 99px; flex-shrink: 0; }
+.vs-active { background: rgba(46,204,113,0.12); color: #2ECC71; border: 1px solid rgba(46,204,113,0.25); }
+.vs-closed { background: rgba(74,81,120,0.3); color: #4A5178; border: 1px solid rgba(74,81,120,0.3); }
+.vs-pending { background: rgba(212,168,83,0.1); color: #D4A853; border: 1px solid rgba(212,168,83,0.2); }
+.vt-deadline { font-size: 12px; color: #4A5178; margin-top: 4px; }
+.vt-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.vt-option { padding: 14px 18px; border-radius: 12px; border: 1px solid rgba(212,168,83,0.1); background: #07091A; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+.vt-option.vo-selected { border-color: #D4A853; background: rgba(212,168,83,0.07); }
+.vt-opt-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.vt-opt-label { font-size: 14px; color: #C8CAD8; font-weight: 500; }
+.vt-opt-count { font-size: 13px; color: #D4A853; font-weight: 600; }
+.vt-opt-bar { height: 4px; background: #0D1028; border-radius: 99px; overflow: hidden; }
+.vt-opt-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #D4A853, #B8892C); transition: width 0.6s ease; }
+.vt-opt-pct { font-size: 10px; color: #3D4165; margin-top: 4px; text-align: right; }
+.vt-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(212,168,83,0.25); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: #D4A853; margin-right: 12px; flex-shrink: 0; }
+.vo-selected .vt-check { background: rgba(212,168,83,0.15); border-color: #D4A853; }
+.vt-btn { padding: 11px 28px; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s; }
+.vt-btn-cast { background: linear-gradient(135deg, #D4A853, #B8892C); border: none; color: #07091A; }
+.vt-btn-cast:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.vt-total { font-size: 12px; color: #3D4165; margin-top: 14px; }
+.vt-your-vote { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #D4A853; margin-top: 10px; padding: 8px 14px; background: rgba(212,168,83,0.07); border-radius: 8px; }
+.vt-create { display: flex; flex-direction: column; gap: 16px; }
+.vt-create-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #4A5178; font-weight: 500; margin-bottom: 6px; }
+.vt-create-input { width: 100%; background: #07091A; border: 1px solid rgba(212,168,83,0.12); border-radius: 10px; padding: 13px 16px; color: #C8CAD8; font-family: 'Outfit', sans-serif; font-size: 14px; outline: none; }
+.vt-option-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.vt-opt-pill { padding: 6px 14px; background: rgba(212,168,83,0.08); border: 1px solid rgba(212,168,83,0.2); border-radius: 99px; color: #D4A853; font-size: 12.5px; display: flex; align-items: center; gap: 6px; }
+.vt-opt-pill button { background: none; border: none; color: #7A6840; cursor: pointer; font-size: 14px; padding: 0; line-height: 1; }

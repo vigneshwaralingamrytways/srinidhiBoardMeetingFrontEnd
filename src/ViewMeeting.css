@@ -1,0 +1,72 @@
+.meeting-container {
+  min-height: 100vh;
+  padding: 32px 24px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* DARK MODE */
+
+.dark-theme {
+  background: #06081a;
+  color: #f4f0ff;
+}
+
+/* LIGHT MODE */
+
+.light-theme {
+  background: #f4f6fb;
+  color: #111827;
+}
+
+/* Toggle Button */
+
+.theme-toggle-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  margin-left: 900px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.dark-theme .theme-toggle-btn {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+.light-theme .theme-toggle-btn {
+  background: #111827;
+  color: #fff;
+}
+
+/* Light Mode Overrides */
+
+.light-theme h1,
+.light-theme h2,
+.light-theme h3,
+.light-theme h4,
+.light-theme h5,
+.light-theme h6 {
+  color: #111827 !important;
+}
+
+.light-theme p,
+.light-theme span,
+.light-theme div {
+  color: inherit;
+}
+
+.light-theme button {
+  color: inherit;
+}
+
+.light-theme .meeting-card,
+.light-theme .mom-card,
+.light-theme .info-panel {
+  background: #ffffff;
+  border: 1px solid #dbe3f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}

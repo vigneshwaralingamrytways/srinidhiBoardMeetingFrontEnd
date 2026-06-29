@@ -1,0 +1,88 @@
+/* ResolutionSection.css */
+
+.meeting-card {
+  width: 100%;
+  background: #0c1026;
+  border: 1px solid rgba(212, 168, 83, 0.12);
+  border-radius: 24px;
+  padding: 28px;
+}
+
+.section-header {
+  margin-bottom: 24px;
+}
+
+.section-header h2 {
+  color: #ffffff;
+  font-size: 34px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.section-header p {
+  color: #8f95b2;
+  font-size: 15px;
+}
+
+.field {
+  margin-bottom: 22px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 10px;
+  color: #a5abc5;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  background: #07091a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  color: #ffffff;
+  font-size: 15px;
+  transition: 0.3s ease;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: rgba(212, 168, 83, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.08);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.field input[type="file"] {
+  padding: 14px;
+  cursor: pointer;
+}
+
+.field input[type="file"]::-webkit-file-upload-button {
+  background: #d4a853;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: #111;
+  font-weight: 600;
+  margin-right: 14px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .meeting-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .section-header h2 {
+    font-size: 28px;
+  }
+}

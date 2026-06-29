@@ -1,0 +1,99 @@
+.nav-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 240px;
+  background: #0B0D1E;
+  border-right: 1px solid rgba(212,168,83,0.12);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.nav-brand { padding: 30px 24px 24px; border-bottom: 1px solid rgba(212,168,83,0.08); }
+.nav-brand-mark { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.nav-brand-gem {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #D4A853, #8B6A2A);
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.nav-brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #D4A853;
+  letter-spacing: 0.5px;
+}
+.nav-brand-tagline {
+  font-size: 10px;
+  color: #3D4165;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  padding-left: 42px;
+}
+.nav-menu { padding: 20px 12px; flex: 1; }
+.nav-section-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #2D3155;
+  padding: 0 12px;
+  margin: 16px 0 8px;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #4A5178;
+  font-size: 13.5px;
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+  user-select: none;
+}
+.nav-link:hover { background: rgba(212,168,83,0.05); color: #A8936A; }
+.nav-link.nl-active {
+  background: rgba(212,168,83,0.1);
+  color: #D4A853;
+  border-color: rgba(212,168,83,0.18);
+  font-weight: 500;
+}
+.nav-link-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-link-badge {
+  margin-left: auto;
+  background: rgba(212,168,83,0.15);
+  color: #D4A853;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 99px;
+}
+.nav-footer { padding: 16px 12px; border-top: 1px solid rgba(212,168,83,0.08); }
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(212,168,83,0.08);
+}
+.nav-user-av {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D4A853, #8B6A2A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #07091A;
+}
+.nav-user-name { font-size: 13px; font-weight: 500; color: #C8CAD8; }
+.nav-user-role { font-size: 10px; color: #3D4165; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.5px; }

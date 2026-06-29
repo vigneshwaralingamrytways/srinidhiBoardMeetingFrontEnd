@@ -1,0 +1,141 @@
+.Container{
+    padding : 1em 2em 0em 6em ;
+    
+}
+
+  
+  .ourTeam {
+    padding: 30px 0 40px;
+    margin-bottom: 30px;
+    margin: 0px 20rem 0px 0px;
+    background-color: #f7f5ec;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+    width: 12rem;
+    max-height: 40vh;
+
+  }  
+  
+  .ourTeam .picture {
+    display: inline-block;
+    height: 130px;
+    width: 130px;
+    margin-bottom: 30px;
+    z-index: 1;
+    position: relative;
+  }
+  
+  .ourTeam .picture::before {
+    content: "";
+    width: 100%;
+    height: 0;
+    border-radius: 50%;
+    background-color: #1369ce;
+    position: absolute;
+    bottom: 135%;
+    right: 0;
+    left: 0;
+    opacity: 0.9;
+    transform: scale(3);
+    transition: all 0.3s linear 0s;
+  }
+  
+  .ourTeam:hover .picture::before {
+    height: 100%;
+  }
+  
+  .ourTeam .picture::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #1369ce;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+  
+  .ourTeam .picture img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    transform: scale(1);
+    transition: all 0.9s ease 0s;
+  }
+  
+  .ourTeam:hover .picture img {
+    box-shadow: 0 0 0 14px #f7f5ec;
+    transform: scale(0.7);
+  }
+  
+  .ourTeam .title {
+    display: block;
+    font-size: 15px;
+    color: #4e5052;
+    text-transform: capitalize;
+  }
+  
+  .ourTeam .social {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #1369ce;
+    position: absolute;
+    bottom: -100px;
+    left: 0;
+    transition: all 0.5s ease 0s;
+  }
+  
+  .ourTeam:hover .social {
+    bottom: 0;
+  }
+  
+  .ourTeam .social li {
+    display: inline-block;
+  }
+  
+  .ourTeam .social li a {
+    display: block;
+    padding: 10px;
+    font-size: 17px;
+    color: white;
+    transition: all 0.3s ease 0s;
+    text-decoration: none;
+  }
+  
+  .ourTeam .social li a:hover {
+    color: #1369ce;
+    background-color: #f7f5ec;
+  }
+  
+ 
+
+  
+  @media only screen and (max-width: 600px) {
+    .ourTeam {
+      padding: 5px 0 15px 0;
+     
+      margin: 0px 1rem 0px 0px;
+      background-color: #f7f5ec;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+      width: 6rem;
+      max-height: 20vh;
+  
+    }  
+    .ourTeam .picture {
+            height: 35px;
+      width: 35px;
+      margin-bottom: 3px;
+    
+    }
+
+
+  .ourTeam .title {
+    font-size: 10px;
+    
+  }
+  }

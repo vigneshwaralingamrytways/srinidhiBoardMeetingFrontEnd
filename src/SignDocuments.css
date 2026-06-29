@@ -1,0 +1,37 @@
+.sd-wrap { padding: 48px 52px; font-family: 'Outfit', sans-serif; width: 100%; max-width: none; }
+.sd-inner { width: min(100%, 1120px); }
+.sd-title { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 700; color: #E0E2EB; margin-bottom: 6px; }
+.sd-sub { font-size: 13px; color: #3D4165; margin-bottom: 44px; }
+.sd-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.sd-doc { background: #0B0D22; border: 1px solid rgba(212,168,83,0.1); border-radius: 16px; padding: 24px; cursor: pointer; transition: all 0.25s; }
+.sd-doc:hover { border-color: rgba(212,168,83,0.28); transform: translateY(-2px); }
+.sd-doc.sd-selected { border-color: rgba(212,168,83,0.5); background: rgba(212,168,83,0.04); }
+.sd-doc-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+.sd-doc-ic { width: 44px; height: 52px; border-radius: 8px; flex-shrink: 0; background: rgba(212,168,83,0.1); border: 1px solid rgba(212,168,83,0.2); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #D4A853; }
+.sd-doc-title { font-size: 14px; color: #E0E2EB; font-weight: 500; margin-bottom: 5px; line-height: 1.4; }
+.sd-doc-meta { font-size: 11px; color: #3D4165; }
+.sd-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 99px; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.sb-pending { background: rgba(212,168,83,0.1); color: #D4A853; border: 1px solid rgba(212,168,83,0.2); }
+.sb-signed { background: rgba(46,204,113,0.1); color: #2ECC71; border: 1px solid rgba(46,204,113,0.2); }
+.sb-reviewing { background: rgba(74,158,212,0.1); color: #4A9ED4; border: 1px solid rgba(74,158,212,0.2); }
+.sd-signers { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+.sd-signer-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #07091A; border: 2px solid #0B0D22; margin-left: -6px; }
+.sd-signer-av:first-child { margin-left: 0; }
+.sd-signers-label { font-size: 11px; color: #3D4165; margin-left: 4px; }
+.sd-panel { background: #0B0D22; border: 1px solid rgba(212,168,83,0.1); border-radius: 18px; padding: 30px; margin-top: 24px; }
+.sd-panel-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #E0E2EB; margin-bottom: 6px; }
+.sd-panel-sub { font-size: 12.5px; color: #3D4165; margin-bottom: 24px; }
+.sd-doc-preview { background: #07091A; border: 1px solid rgba(212,168,83,0.1); border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; font-size: 13px; color: #6A7198; line-height: 1.8; }
+.sd-doc-preview h3 { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: #C8CAD8; margin-bottom: 10px; }
+.sd-sig-area { width: 100%; height: 160px; background: #07091A; border: 2px dashed rgba(212,168,83,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; cursor: crosshair; position: relative; overflow: hidden; transition: border-color 0.2s; }
+.sd-sig-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sd-sig-placeholder { color: #2D3363; font-size: 13px; pointer-events: none; text-align: center; }
+.sd-sig-icon { font-size: 28px; pointer-events: none; }
+.sd-sig-actions { display: flex; gap: 10px; margin-top: 14px; }
+.sd-btn { padding: 11px 24px; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(212,168,83,0.2); color: #7A6840; background: transparent; }
+.sd-btn-primary { background: linear-gradient(135deg, #D4A853, #B8892C); border-color: transparent; color: #07091A; font-weight: 600; }
+.sd-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.sd-cert { text-align: center; padding: 40px; }
+.sd-cert-ic { font-size: 40px; margin-bottom: 16px; }
+.sd-cert-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #D4A853; margin-bottom: 8px; }
+.sd-cert-sub { font-size: 13px; color: #4A5178; }

@@ -1,0 +1,52 @@
+.company-management,
+.company-management *,
+.company-management *::before,
+.company-management *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.company-management {
+  --gold:#C9A252;--gold-dim:#8B6A30;--gold-pale:#F5E4BC;
+  --bg:#0A0C10;--bg2:#0F1218;--bg3:#161B24;--bg4:#1D2433;
+  --border:#ffffff10;--border2:#ffffff20;--border3:#C9A25230;
+  --text:#E8E4DC;--text2:#9B9590;--text3:#5C5A56;
+  --teal:#1D9E75;--coral:#D85A30;--blue:#378ADD;--red:#E24B4A;
+  --green:#639922;--amber:#BA7517;
+  --sidebar:240px;
+  --font-display:'Cormorant Garamond',serif;
+  --font-mono:'DM Mono',monospace;
+  --font-head:'Bebas Neue',sans-serif;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.company-management button {
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+
+.company-management input,
+.company-management select {
+  font-family: var(--font-mono);
+}
+
+.company-management ::-webkit-scrollbar { width: 4px; }
+.company-management ::-webkit-scrollbar-track { background: var(--bg2); }
+.company-management ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+@keyframes cmFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes cmSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes cmPulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+@keyframes cmSpin { to { transform: rotate(360deg); } }
+@keyframes cmGlowLine { 0%,100% { opacity: .3; } 50% { opacity: 1; } }
+
+.company-management .fade-up { animation: cmFadeUp .5s ease forwards; }
+.company-management .slide-in { animation: cmSlideIn .4s ease forwards; }
