@@ -91,7 +91,7 @@ function Login() {
       );
     //  history.push("/modules");
       // returnObject.userType && returnObject.userType === "ClientUser" ?  history.push("sales/neworder") : history.push("/modules");
-      history.push("/circular")
+      history.push("/create")
     } else {
       AlertHandler("Incorrect Username and Password", "danger");
     }

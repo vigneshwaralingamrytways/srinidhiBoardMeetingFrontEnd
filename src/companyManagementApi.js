@@ -599,25 +599,91 @@ const wait = (value) => new Promise((resolve) => setTimeout(() => resolve(clone(
 const fromInitials = (name) => name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 
 const request = async (path, options) => {
+  const token = localStorage.getItem('token');
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...(options?.headers || {}),
+  };
   const response = await fetch(`${API_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
     ...options,
+    headers,
   });
   if (!response.ok) throw new Error(`API request failed: ${response.status}`);
-  return response.json();
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+
+    return { message: text || "Success", success: true };
+  }
 };
 const formDataRequest = async (url, formData) => {
+  const token = localStorage.getItem('token');
+  const headers = {
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+
   const response = await fetch(`${API_URL}${url}`, {
     method: "POST",
     body: formData,
+    headers,
   });
+  // if (!response.ok) {
+  //   const error = await response.json().catch(() => ({}));
+  //   throw new Error(error.message || `Upload failed: ${response.status}`);
+  // }
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `Upload failed: ${response.status}`);
+    let errorMsg = `Upload failed: ${response.status}`;
+    try {
+      const errorData = await response.json();
+      errorMsg = errorData.message || errorMsg;
+    } catch {
+      const text = await response.text();
+      if (text) errorMsg = text;
+    }
+    throw new Error(errorMsg);
   }
-  return response.json();
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    return response.json();
+  }
+  return { success: true };
+  // return response.json();
 };
+const mapCompany = (apiCompany) => ({
+  id: apiCompany.companyId,
+  name: apiCompany.companyName,
+  logo: apiCompany.avatar || apiCompany.companyName?.slice(0, 2).toUpperCase() || "CO",
+  contactNumber: apiCompany.contactNumber,
+  state: apiCompany.state,
+  pincode: apiCompany.pinCode,
+  country: apiCompany.country,
+  companySecretaryName: apiCompany.companySecretaryName,
+  companySecretaryContact: apiCompany.secretaryContactNo,
+  companySecretaryEmail: apiCompany.secretaryEmail,
+  registeredAddress: apiCompany.registeredAddress,
+  cin: apiCompany.cinNo,
+  gstNumber: apiCompany.gstNo,
+  panNumber: apiCompany.panNo,
+  tan: apiCompany.tanNo,
+  stateOfRegistration: apiCompany.stateOfRegistration,
+  entityType: apiCompany.entityType,
+  taxRegime: apiCompany.taxRegime,
+  status: apiCompany.isActive ? "active" : "inactive",
+  industry: apiCompany.industry || "General",
+  employees: apiCompany.employees || 0,
+  tier: apiCompany.tier || "tier",
+  founded: apiCompany.founded || new Date().getFullYear(),
+  revenue: apiCompany.revenue || "0",
+  directors: [],
+  shareholders: [],
+  attachedDocs: []
+});
+
 export const companyManagementApi = {
+
+
   //   async getBootstrap() {
   //   if (API_URL.startsWith("static://")) {
   //     return wait({
@@ -629,8 +695,9 @@ export const companyManagementApi = {
   //   return request("/bootstrap");
   // },
   async getBootstrap() {
+    console.log(" getBootstrap")
     return request("/company/getAll", { method: "GET" })
-      .then(companies => ({ companies, users: [], roleAssignments: {} }));
+      .then(companies => ({ companies: companies.map(mapCompany), users: [], roleAssignments: {} }));
   },
 
   async createCompany(payload) {
@@ -644,32 +711,93 @@ export const companyManagementApi = {
     //   });
     // }
     // return request("/companies", { method: "POST", body: JSON.stringify(payload) });
-    return request("/company/create", {
+    console.log(" val for save==", payload)
+    // return request("/company/create", {
+    //   method: "POST",
+    //   body: JSON.stringify(payload),
+    // });
+    const created = await request("/company/create", {
       method: "POST",
       body: JSON.stringify(payload),
     });
+    return mapCompany(created);
   },
-  async updateCompany(id, payload) {
-    return request(`/company/update/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(payload),
-    });
+  // async updateCompany(id, payload) {
+  //   return request(`/company/update/${id}`, {
+  //     method: "PUT",
+  //     body: JSON.stringify(payload),
+  //   });
+  // },
+  async deleteDocument(id) {
+    console.log("deleteDocument", id);
+    return request(`/companyDocuments/delete/${id}`, { method: "DELETE" });
   },
-
   async uploadDocument(companyId, documentType, file) {
     const formData = new FormData();
     formData.append("companyId", companyId);
     formData.append("documentType", documentType);
     formData.append("file", file);
+    console.log("=== file uplaods", formData)
     return formDataRequest("/companyDocuments/fileUpload", formData);
   },
+
   async createDirector(directorData) {
+    console.log("dir save val", directorData)
     return request("/companyDirectors/create", {
       method: "POST",
       body: JSON.stringify(directorData),
     });
   },
+  async getDocumentsByCompany(companyId) {
+    console.log("getDocumentsByCompany", companyId)
+    return request(`/companyDocuments/getByCompany/${companyId}`, { method: "GET" });
+  },
+  async getActiveDirectorsByCompany(companyId) {
+    console.log("getActiveDirectorsByCompany", companyId)
+    return request(`/companyDirectors/getAllDirectorsByCompanyActive/${companyId}`, {
+      method: "GET"
+    });
+  },
+  async updateCompany(id, payload) {
+    console.log("updateCompany", payload)
+    const updated = await request(`/company/update/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return mapCompany(updated);
+  },
+  async deleteDirector(id) {
+    console.log("deleteDirector", id)
+    return request(`/companyDirectors/delete/${id}`, { method: "DELETE" });
+  },
+
+  async deleteShareholder(id) {
+    console.log("deleteShareholder", id)
+    return request(`/companyShareHolder/delete/${id}`, { method: "DELETE" });
+  },
+  async updateDirector(id, directorData) {
+    console.log("updateDirector", directorData)
+    return request(`/companyDirectors/update/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(directorData),
+    });
+  },
+
+  async updateShareholder(id, shareholderData) {
+    console.log("updateShareholder", shareholderData)
+    return request(`/companyShareHolder/update/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(shareholderData),
+    });
+  },
+  async getActiveShareholdersByCompany(companyId) {
+    console.log("getActiveShareholdersByCompany", companyId)
+    return request(`/companyShareHolder/getAllShareHolderByCompanyActive/${companyId}`, {
+      method: "GET"
+    });
+  },
   async createShareholder(shareholderData) {
+    console.log("createShareholder", shareholderData)
     return request("/companyShareHolder/create", {
       method: "POST",
       body: JSON.stringify(shareholderData),

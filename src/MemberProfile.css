@@ -74,6 +74,7 @@
 /* -- TOPBAR -------------------------------------------------- */
 .member-profile-topbar {
   padding: 0 32px;
+   /* padding-left :240px; */
   height: 64px;
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -157,7 +158,8 @@
 .member-profile-card {
   background: var(--bg3);
   border: 1px solid var(--border);
-  padding: 20px;
+  /* padding: 20px; */
+  padding-left:240px;
   cursor: pointer;
   transition: border-color 0.15s;
   animation: cmFadeUp 0.3s ease both;

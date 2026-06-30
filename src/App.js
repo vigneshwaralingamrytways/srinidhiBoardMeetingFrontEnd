@@ -189,8 +189,12 @@ return (
         ))} */}
       <>
       <Protected isSignedIn={isLoggedIn}>
+        <Navigation page={page} setPage={handleSetPage} />
        <React.Suspense fallback={loading}>
-        {AllRoutes}
+        {/* {AllRoutes} */}
+        <div style={{ marginLeft: '240px', padding: '20px', minHeight: '100vh' }}> 
+        <AllRoutes {...routeProps} />
+        </div>
         </React.Suspense>
         </Protected>
         </>

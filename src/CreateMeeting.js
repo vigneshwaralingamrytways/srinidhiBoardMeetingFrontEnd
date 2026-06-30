@@ -647,7 +647,7 @@ export default function CreateMeeting({ editMeeting = null, onEditSave = null })
   }
 
   return (
-    <div className="cm-wrap" style={{ width:"100%", maxWidth:"100%", height:"100%", display:"flex", flexDirection:"column", padding:"0 24px", boxSizing:"border-box", overflow:"hidden" }}>
+    <div className="cm-wrap" style={{ width:"100%", maxWidth:"100%", height:"100%", display:"flex", flexDirection:"column",   boxSizing:"border-box", overflow:"hidden" }}>
       <Toast toasts={toasts} />
       <div className="cm-inner" style={{ width:"100%", maxWidth:"100%", display:"flex", flexDirection:"column", flex:1, minHeight:0 }}>
 

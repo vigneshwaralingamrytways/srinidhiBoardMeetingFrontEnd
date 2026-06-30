@@ -1,6 +1,7 @@
 .meeting-page {
   min-height: 100vh;
   padding: 32px 24px;
+  /* padding-left:240px; */
   box-sizing: border-box;
   font-family: "DM Sans", "Segoe UI", sans-serif;
   transition: all 0.3s ease;

@@ -216,7 +216,7 @@ function ResendModal({ meeting, participants, onClose, onConfirm }) {
             {done ? (
               <><FaCheck style={{ fontSize: 10 }} /> Sent!</>
             ) : sending ? (
-              <><SpinnerDot /> Sending</>
+              <><SpinnerDot /> Sending</>
             ) : (
               <><FaPaperPlane style={{ fontSize: 10 }} /> Resend to {selected.length || ""} {selected.length ? `Participant${selected.length > 1 ? "s" : ""}` : "Participants"}</>
             )}
@@ -468,7 +468,7 @@ export default function MeetingInvite() {
         background: bg,
         borderRadius: 20,
         border: `1px solid ${border}`,
-        padding: "24px",
+        // paddingLeft: "240px",
         width: "100%",
       }}>
         {/* Header */}

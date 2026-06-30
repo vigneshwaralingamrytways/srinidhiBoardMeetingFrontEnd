@@ -1,4 +1,6 @@
-.cm-wrap { padding: 48px 52px; width: 100%; max-width: none; font-family: 'Outfit', sans-serif; }
+.cm-wrap { 
+  /* padding: 48px 52px; */
+   width: 100%; max-width: none; font-family: 'Outfit', sans-serif; }
 .cm-inner { width: min(100%, 1120px); }
 .cm-page-title { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 700; color: #E0E2EB; margin-bottom: 6px; }
 .cm-page-sub { font-size: 13px; color: #3D4165; margin-bottom: 44px; }

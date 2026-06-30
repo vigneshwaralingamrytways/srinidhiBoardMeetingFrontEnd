@@ -16,6 +16,7 @@ import {
   FaFile, FaPlus,
   FaEdit,
 } from 'react-icons/fa';
+import useFetch from 'use-http';
 
 
 
@@ -377,6 +378,7 @@ const sampleDocuments = [
 const COMPANY_STEPS = ["Identity", "Tax & Registration", "Documents", "Directors", "Shareholders"];
 
 const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
+  const { get, response } = useFetch({ data: [] });
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -384,7 +386,9 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
   const [editingShareholder, setEditingShareholder] = useState(null);
   const [showDirectorModal, setShowDirectorModal] = useState(false);
   const [showShareholderModal, setShowShareholderModal] = useState(false);
-
+  const initialCompanyFields = useRef(null);
+  const initialDirectorsRef = useRef([]);
+  const initialShareholdersRef = useRef([]);
   const [newShareholder, setNewShareholder] = useState({
     name: "",
     shares: "",
@@ -409,18 +413,29 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
     leavingReason: "",
     otherLeavingReason: "",
   });
-
-  const [documents, setDocuments] = useState(() =>
-    Array.isArray(initial?.attachedDocs) && initial.attachedDocs.length
-      ? initial.attachedDocs
-      : sampleDocuments
-  );
-
+  const [initialCompany, setInitialCompany] = useState(null);
+  const [initialDirectors, setInitialDirectors] = useState([]);
+  const [initialShareholders, setInitialShareholders] = useState([]);
+  const [initialDocuments, setInitialDocuments] = useState([]);
+  // const [documents, setDocuments] = useState([]);
+  // useEffect(() => {
+  //   if (initial && initial.id) {
+  //     const fetchDocuments = async () => {
+  //       try {
+  //         const docs = await companyManagementApi.getDocumentsByCompany(initial.id);
+  //         setDocuments(docs);
+  //       } catch (error) {
+  //         console.error("Failed to load documents:", error);
+  //       }
+  //     };
+  //     fetchDocuments();
+  //   }
+  // }, [initial]);
   const emptyCompanyForm = {
     name: "",
     logo: "",
-    industry: "Technology",
-    country: "United States",
+    industry: "",
+    country: "",
     employees: 0,
     status: "active",
     tier: "starter",
@@ -449,21 +464,113 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
     gstDoc: null,
     directors: [],
     shareholders: [],
-    attachedDocs: sampleDocuments,
+    attachedDocs: [],
   };
 
   const [form, setForm] = useState(() => ({
     ...emptyCompanyForm,
     ...(initial || {}),
-    directors: Array.isArray(initial?.directors) ? initial.directors : [],
-    shareholders: Array.isArray(initial?.shareholders) ? initial.shareholders : [],
-    attachedDocs: Array.isArray(initial?.attachedDocs) && initial.attachedDocs.length
-      ? initial.attachedDocs
-      : sampleDocuments
+    directors: [],
+    shareholders: [],
+    attachedDocs: [],
+    toDeleteDirectors: [],
+    toDeleteShareholders: [],
+    toDeleteDocs: []
   }));
-
+  const api = ""
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+  useEffect(() => {
+    if (initial && initial.id) {
+      const fetchNestedData = async () => {
+        try {
+          const directorsRes = await get(api + "/companyDirectors/getAllDirectorsByCompanyActive/" + initial.id);
+          let mappedDirectors = [];
 
+          if (response.ok) {
+            mappedDirectors = directorsRes.map(d => ({
+              id: d.companyDirectorsId,
+              name: d.companyDirectorName || "",
+              din: d.din || "",
+              position: d.position || "",
+              joiningDate: d.dateOfJoining || "",
+              email: d.emailId || "",
+              contact: d.contactNo || "",
+              leavingDate: d.leavingDate || "",
+              leavingReason: d.leavingReason || "",
+              otherLeavingReason: "",
+              isNew: false
+            }));
+          }
+          setInitialDirectors(mappedDirectors);
+          initialDirectorsRef.current = mappedDirectors;
+          const shareholdersRes = await get(api + "/companyShareHolder/getAllShareHolderByCompanyActive/" + initial.id);
+          let mappedShareholders = [];
+
+          if (response.ok) {
+            mappedShareholders = shareholdersRes.map(s => ({
+              id: s.shareHolderId || s.id,
+              name: s.shareHolderName || "",
+              shares: s.noOfShares || "",
+              percentage: s.noOfShares || "",
+              acquisitionType: s.shareHolderType || "",
+              issueDate: s.dateOfIssueShares || "",
+              isNew: false
+              // kycDocName: s.kycDocName || "",
+              // kycDocUrl: s.kycDocUrl || ""
+            }));
+          }
+          setInitialShareholders(mappedShareholders);
+          initialShareholdersRef.current = mappedShareholders;
+          const docs = await companyManagementApi.getDocumentsByCompany(initial.id);
+          let mappedDocuments = [];
+          if (response.ok) {
+            mappedDocuments = docs.map(d => ({
+              ...d,
+              id: d.companyDocumentsId,
+              type: d.documentType,
+              name: d.fileName,
+              url: d.filePath,
+              file: null,
+              isNew: false,
+            }))
+          }
+          setInitialDocuments(mappedDocuments);
+
+          setForm(prev => ({
+            ...prev,
+            directors: mappedDirectors,
+            shareholders: mappedShareholders,
+            attachedDocs: mappedDocuments
+          }));
+          setInitialCompany(initial);
+          initialCompanyFields.current = {
+            name: initial.name,
+            logo: initial.logo,
+            contactNumber: initial.contactNumber,
+            state: initial.state,
+            pincode: initial.pincode,
+            country: initial.country,
+            companySecretaryName: initial.companySecretaryName,
+            companySecretaryContact: initial.companySecretaryContact,
+            companySecretaryEmail: initial.companySecretaryEmail,
+            registeredAddress: initial.registeredAddress,
+            cin: initial.cin,
+            gstNumber: initial.gstNumber,
+            panNumber: initial.panNumber,
+            tan: initial.tan,
+            stateOfRegistration: initial.stateOfRegistration,
+            entityType: initial.entityType,
+            taxRegime: initial.taxRegime,
+            status: initial.status,
+          };
+        } catch (error) {
+          console.error("Error fetching nested company data:", error);
+        }
+      };
+
+      fetchNestedData();
+    }
+  }, [initial, get, response]);
   const directorNameOptions = users.map((u) => ({
     id: u.id,
     name: u.name,
@@ -527,44 +634,167 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
     setStep(s => s + 1);
   };
 
-  const saveCompany = async (values) => {
-    try {
-      const res = await (+"/compay/create", values)
-      
-    } catch (e) {
-      console.log(" error==", e)
-    }
-  }
+
+  // const submit = async () => {
+  //   setSaving(true);
+  //   setError("");
+  //   await onCreate({ ...form, attachedDocs: documents });
+  //   setSaving(false);
+  //   onBack();
+  // };
   const submit = async () => {
     setSaving(true);
     setError("");
-    await onCreate({ ...form, attachedDocs: documents });
-    setSaving(false);
-    onBack();
+    try {
+      const companyPayload = {
+        companyName: form.name,
+        avatar: form.logo,
+        contactNumber: form.contactNumber,
+        state: form.state,
+        pinCode: form.pincode,
+        country: form.country,
+        companySecretaryName: form.companySecretaryName,
+        secretaryContactNo: form.companySecretaryContact,
+        secretaryEmail: form.companySecretaryEmail,
+        registeredAddress: form.registeredAddress,
+        cinNo: form.cin,
+        gstNo: form.gstNumber,
+        panNo: form.panNumber,
+        tanNo: form.tan,
+        stateOfRegistration: form.stateOfRegistration,
+        entityType: form.entityType,
+        taxRegime: form.taxRegime,
+        isActive: form.status === "active",
+      };
+      let savedCompany;
+      if (initial) {
+
+        const hasCompanyChanges = initialCompanyFields.current
+          ? Object.keys(initialCompanyFields.current).some(
+            key => form[key] !== initialCompanyFields.current[key]
+          )
+          : true;
+        if (hasCompanyChanges) {
+          savedCompany = await companyManagementApi.updateCompany(initial.id, companyPayload);
+        } else {
+          savedCompany = initialCompany;
+        }
+      } else {
+
+        savedCompany = await companyManagementApi.createCompany(companyPayload);
+      }
+      const companyId = savedCompany.id || savedCompany.companyId;
+
+      for (const id of form.toDeleteDirectors) {
+        await companyManagementApi.deleteDirector(id);
+      }
+      for (const id of form.toDeleteShareholders) {
+        await companyManagementApi.deleteShareholder(id);
+      }
+      for (const id of form.toDeleteDocs) {
+        await companyManagementApi.deleteDocument(id);
+      }
+      for (const director of form.directors) {
+        const payload = {
+          companyId: companyId,
+          companyDirectorName: director.name,
+          din: director.din,
+          position: director.position,
+          dateOfJoining: director.joiningDate,
+          emailId: director.email,
+          contactNo: director.contact,
+          leavingDate: director.leavingDate || null,
+          leavingReason: director.leavingReason === "Others" ? director.otherLeavingReason : director.leavingReason,
+          isActive: true,
+        };
+
+        if (director.id && !director.isNew) {
+          const initial = initialDirectorsRef.current.find(d => d.id === director.id);
+          if (initial) {
+
+            const hasChanged = Object.keys(initial).some(key => director[key] !== initial[key]);
+            if (hasChanged) {
+              await companyManagementApi.updateDirector(director.id, payload);
+            }
+          } else {
+
+            // await companyManagementApi.updateDirector(director.id, payload);
+          }
+        } else {
+          await companyManagementApi.createDirector(payload);
+        }
+      }
+      for (const shareholder of form.shareholders) {
+        const payload = {
+          companyId: companyId,
+          shareHolderName: shareholder.name,
+          noOfShares: shareholder.percentage,
+          shareHolderType: shareholder.acquisitionType,
+          dateOfIssueShares: shareholder.issueDate,
+
+        };
+        if (shareholder.id && !shareholder.isNew) {
+          const initial = initialShareholdersRef.current.find(s => s.id === shareholder.id);
+          if (initial) {
+
+            const hasChanged = Object.keys(initial).some(key => shareholder[key] !== initial[key]);
+            if (hasChanged) {
+              await companyManagementApi.updateShareholder(shareholder.id, payload);
+            }
+          } else {
+            // await companyManagementApi.updateShareholder(shareholder.id, payload);
+          }
+        } else {
+          await companyManagementApi.createShareholder(payload);
+        }
+      }
+      for (const doc of form.attachedDocs) {
+        console.log("===file", doc)
+        if (doc.isNew && doc.file) {
+          await companyManagementApi.uploadDocument(companyId, doc.type, doc.file);
+        }
+      }
+
+      const fullCompany = { ...savedCompany, attachedDocs: form.attachedDocs };
+      setSaving(false);
+      onBack();
+      onCreate(fullCompany);
+    } catch (err) {
+      setError(err.message || "Failed to save company");
+      setSaving(false);
+    }
   };
 
   const saveDocument = () => {
     if (!newDocument.type || !newDocument.file) return;
-
-    setDocuments((prev) => [
+    const newDoc = {
+      id: Date.now(),
+      type: newDocument.type,
+      name: newDocument.file.name,
+      size: newDocument.file.size,
+      mimeType: newDocument.file.type,
+      file: newDocument.file,
+      uploadedAt: new Date().toISOString().slice(0, 10),
+      isNew: true,
+    };
+    setForm(prev => ({
       ...prev,
-      {
-        id: Date.now(),
-        type: newDocument.type,
-        name: newDocument.file.name,
-        size: newDocument.file.size,
-        mimeType: newDocument.file.type,
-        file: newDocument.file,
-        uploadedAt: new Date().toISOString().slice(0, 10),
-      },
-    ]);
-
+      attachedDocs: [...prev.attachedDocs, newDoc]
+    }));
     setNewDocument({ type: "", file: null });
     setShowDocumentModal(false);
   };
 
+  // const removeDocument = (id) => {
+  //   setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+  // };
   const removeDocument = (id) => {
-    setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+    const doc = form.attachedDocs.find(d => d.id === id);
+    setForm(p => ({
+      ...p,
+      attachedDocs: p.attachedDocs.filter(d => d.id !== id),
+      toDeleteDocs: doc && !doc.isNew ? [...p.toDeleteDocs, id] : p.toDeleteDocs
+    }));
   };
 
   const viewDocument = (doc) => {
@@ -573,22 +803,18 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
       window.open(fileUrl, "_blank");
       return;
     }
-
     if (doc.url) {
       window.open(doc.url, "_blank");
+      return;
     }
+    alert("No preview available for this document.");
   };
 
 
   const saveShareholder = () => {
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
-      shareholders: [
-        ...prev.shareholders,
-        {
-          ...newShareholder
-        }
-      ]
+      shareholders: [...prev.shareholders, { ...newShareholder, isNew: true }]
     }));
 
     setNewShareholder({
@@ -604,40 +830,40 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
     setShowShareholderModal(false);
   };
 
-  const saveDirector = () => {
-    setForm((p) => ({
-      ...p,
-      directors: [
-        ...p.directors,
-        {
-          ...newDirector,
-          leavingDate: "",
-          leavingReason: "",
-          otherLeavingReason: "",
-        },
-      ],
-    }));
+  // const saveDirector = () => {
+  //   setForm((p) => ({
+  //     ...p,
+  //     directors: [
+  //       ...p.directors,
+  //       {
+  //         ...newDirector,
+  //         // leavingDate: "",
+  //         // leavingReason: "",
+  //         // otherLeavingReason: "",
+  //       },
+  //     ],
+  //   }));
 
-    setNewDirector({
-      name: "",
-      din: "",
-      email: "",
-      contact: "",
-      position: "",
-      joiningDate: "",
-      leavingDate: "",
-      leavingReason: "",
-      otherLeavingReason: "",
-    });
+  //   setNewDirector({
+  //     name: "",
+  //     din: "",
+  //     email: "",
+  //     contact: "",
+  //     position: "",
+  //     joiningDate: "",
+  //     leavingDate: "",
+  //     leavingReason: "",
+  //     otherLeavingReason: "",
+  //   });
 
-    setShowDirectorModal(false);
-  };
+  //   setShowDirectorModal(false);
+  // };
 
   const updateDirectorFromModal = () => {
     if (editingDirector !== null) {
       setForm(p => ({
         ...p,
-        directors: p.directors.map((d, i) => i === editingDirector ? { ...newDirector } : d)
+        directors: p.directors.map((d, i) => i === editingDirector ? { ...newDirector, isNew: false } : d)
       }));
       setNewDirector({
         name: "",
@@ -661,7 +887,7 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
     if (editingShareholder !== null) {
       setForm(p => ({
         ...p,
-        shareholders: p.shareholders.map((s, i) => i === editingShareholder ? { ...newShareholder } : s)
+        shareholders: p.shareholders.map((s, i) => i === editingShareholder ? { ...newShareholder, isNew: false } : s)
       }));
       setNewShareholder({
         name: "",
@@ -684,14 +910,48 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
     </div>
   );
 
-  const removeDirector = (index) => setForm(p => ({ ...p, directors: p.directors.filter((_, i) => i !== index) }));
-
+  // const removeDirector = (index) => setForm(p => ({ ...p, directors: p.directors.filter((_, i) => i !== index) }));
+  const removeDirector = (index) => {
+    const director = form.directors[index];
+    setForm(p => ({
+      ...p,
+      directors: p.directors.filter((_, i) => i !== index),
+      toDeleteDirectors: director.id && !director.isNew ? [...p.toDeleteDirectors, director.id] : p.toDeleteDirectors
+    }));
+  };
+  const saveDirector = () => {
+    setForm(p => ({
+      ...p,
+      directors: [...p.directors, { ...newDirector, isNew: true }]
+    }));
+    setShowDirectorModal(false);
+  };
   const updateDirector = (index, field, value) => {
     setForm(p => ({ ...p, directors: p.directors.map((d, i) => i === index ? { ...d, [field]: value } : d) }));
   };
 
-  const removeShareholder = (index) => setForm(p => ({ ...p, shareholders: p.shareholders.filter((_, i) => i !== index) }));
-
+  // const removeShareholder = (index) => setForm(p => ({ ...p, shareholders: p.shareholders.filter((_, i) => i !== index) }));
+  const removeShareholder = async (index) => {
+    const shareholder = form.shareholders[index];
+    // if (shareholder.id) {
+    //   try {
+    //     await companyManagementApi.deleteShareholder(shareholder.id);
+    //     console.log("Shareholder deleted from db:", shareholder.id);
+    //   } catch (err) {
+    //     console.error("Failed to delete shareholder:", err);
+    //     return;
+    //   }
+    // }
+    // setForm(p => ({
+    //   ...p,
+    //   shareholders: p.shareholders.filter((_, i) => i !== index)
+    // }));
+    setForm(p => ({
+      ...p,
+      shareholders: p.shareholders.filter((_, i) => i !== index),
+      toDeleteShareholders: shareholder.id && !shareholder.isNew ? [...p.toDeleteShareholders, shareholder.id] : p.toDeleteShareholders
+    }));
+  };
   const updateShareholder = (index, field, value) => {
     setForm(p => ({ ...p, shareholders: p.shareholders.map((s, i) => i === index ? { ...s, [field]: value } : s) }));
   };
@@ -798,7 +1058,7 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
             </tr>
           </thead>
           <tbody>
-            {documents.map((doc) => (
+            {form.attachedDocs.map((doc) => (
               <tr key={doc.id}>
                 <td style={tableCell}>{doc.type}</td>
                 <td style={tableCell}>{doc.name}</td>
@@ -823,7 +1083,7 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
               </tr>
             ))}
 
-            {documents.length === 0 && (
+            {form.attachedDocs.length === 0 && (
               <tr>
                 <td colSpan="3" style={{ padding: 16, textAlign: "center", color: "var(--text3)", fontSize: 12 }}>
                   No documents added.
@@ -861,7 +1121,7 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
           </thead>
           <tbody>
             {form.directors.map((director, index) => (
-              <tr key={index}>
+              <tr key={director.id || index}>
                 <td style={tableCell}>{director.name}</td>
                 <td style={tableCell}>{director.din}</td>
                 <td style={tableCell}>{director.position}</td>
@@ -908,16 +1168,16 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
           </thead>
           <tbody>
             {form.shareholders.map((holder, index) => (
-              <tr key={index}>
+              <tr key={holder.id || index}>
                 <td style={tableCell}>{holder.name}</td>
                 <td style={tableCell}>{`${holder.percentage}%`}</td>
                 <td style={tableCell}>{holder.acquisitionType || "-"}</td>
                 <td style={tableCell}>{holder.issueDate || "-"}</td>
-                <td style={tableCell}>
+                {/* <td style={tableCell}>
                   {holder.kycDocUrl ? (
                     <button type="button" onClick={() => window.open(holder.kycDocUrl, "_blank")} style={{ border: "1px solid var(--gold)", background: "var(--gold)", color: "#fff", padding: "4px 8px", cursor: "pointer", fontSize: 11 }}>View</button>
                   ) : "-"}
-                </td>
+                </td> */}
                 <td style={tableCell}>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button type="button" onClick={() => { setNewShareholder(holder); setEditingShareholder(index); setShowShareholderModal(true); }}
@@ -1018,9 +1278,8 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
                 <input
                   type="text"
                   value={newDirector.name}
-                  readOnly
-                  style={inputStyle}
-                />
+                  onChange={(e) => setNewDirector(p => ({ ...p, name: e.target.value }))}
+                  style={inputStyle} />
               </Field>
               <Field label="Position">
                 <select value={newDirector.position} onChange={(e) => setNewDirector((p) => ({ ...p, position: e.target.value }))} style={inputStyle}>
@@ -1050,13 +1309,13 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
               <Field label="Leaving Date">
                 <input
                   type="date"
-                  value={newDirector.leavingDate || ""}
+                  value={newDirector.leavingDate}
                   onChange={(e) => setNewDirector((p) => ({ ...p, leavingDate: e.target.value }))}
                   style={inputStyle}
                 />
               </Field>
               <Field label="Leaving Reason">
-                <select value={newDirector.leavingReason || ""} onChange={(e) => setNewDirector((p) => ({ ...p, leavingReason: e.target.value }))} style={inputStyle}>
+                <select value={newDirector.leavingReason} onChange={(e) => setNewDirector((p) => ({ ...p, leavingReason: e.target.value }))} style={inputStyle}>
                   <option value="">Select Reason</option>
                   {DIRECTOR_LEAVING_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
@@ -1227,6 +1486,32 @@ const AddUserModal = ({ onClose, onCreate }) => {
 
 /* -- COMPANY DETAILS PAGE ------------------------------------- */
 const CompanyDetailsPage = ({ company, roles, users, onBack, onEdit }) => {
+  const [docs, setDocs] = useState(company.attachedDocs || []);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+
+    if (!company.attachedDocs || company.attachedDocs.length === 0) {
+      setLoading(true);
+      companyManagementApi.getDocumentsByCompany(company.id)
+        .then(docs => {
+          const mapped = docs.map(d => ({
+            id: d.companyDocumentsId,
+            type: d.documentType,
+            name: d.fileName,
+            url: d.filePath,
+            size: parseInt(d.fileSize, 10) || 0, 
+            uploadedAt: d.uploadedDate,
+            isNew: false,
+          }));
+          setDocs(mapped);
+        })
+        .catch(err => console.error("Failed to fetch documents:", err))
+        .finally(() => setLoading(false));
+    } else {
+      setDocs(company.attachedDocs);
+    }
+  }, [company.id, company.attachedDocs]);
+
   const acColor = INDUSTRY_COLORS[company.industry] || "#C9A252";
   const assignedCount = users.filter(u => roles[u.id]?.[company.id]).length;
 
@@ -1303,15 +1588,20 @@ const CompanyDetailsPage = ({ company, roles, users, onBack, onEdit }) => {
         )}
 
         <p style={{ fontSize: 9, letterSpacing: "0.22em", color: "var(--text3)", textTransform: "uppercase", marginBottom: 10 }}>
-          Attached Documents ({(company.attachedDocs || []).length})
+          {/* Attached Documents ({(company.attachedDocs || []).length}) */}
+           Attached Documents ({docs.length})
         </p>
-        {(!company.attachedDocs || company.attachedDocs.length === 0) ? (
+        {/* {(!company.attachedDocs || company.attachedDocs.length === 0) ? ( */}
+         {loading ? (
           <div style={{ border: "1px solid var(--border)", background: "var(--bg3)", padding: "16px", textAlign: "center" }}>
             <p style={{ fontSize: 11, color: "var(--text3)", fontStyle: "italic" }}>No documents attached.</p>
           </div>
-        ) : (
+        ) : 
+        // docs.length === 0 ? 
+        (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
-            {company.attachedDocs.map((doc, idx) => {
+            {/* {company.attachedDocs.map((doc, idx) => { */}
+            {docs.map((doc, idx) => {
               const ext = doc.name.split(".").pop().toUpperCase();
               const extColors = { PDF: "#D85A30", JPG: "#1D9E75", JPEG: "#1D9E75", PNG: "#378ADD", DOCX: "#C9A252", DOC: "#C9A252" };
               const extColor = extColors[ext] || "#9B9590";
@@ -1526,14 +1816,24 @@ const CompaniesPage = ({ companies, onSelectCompany, onAddCompany, onViewCompany
 
   const filtered = companies.filter(c => {
     const q = search.toLowerCase();
-    const matchSearch = !q || c.name.toLowerCase().includes(q) || c.industry.toLowerCase().includes(q) || c.country.toLowerCase().includes(q);
+    const compName = c.name || "";
+    const compInd = c.industry || "";
+    const compCountry = c.country || "";
+
+    const matchSearch = !q || compName.toLowerCase().includes(q) || compInd.toLowerCase().includes(q) || compCountry.toLowerCase().includes(q);
     const matchStatus = filterStatus === "all" || c.status === filterStatus;
     const matchTier = filterTier === "all" || c.tier === filterTier;
+
     return matchSearch && matchStatus && matchTier;
   }).sort((a, b) => {
-    if (sortBy === "name") return a.name.localeCompare(b.name);
-    if (sortBy === "employees") return b.employees - a.employees;
-    if (sortBy === "founded") return a.founded - b.founded;
+    if (sortBy === "name") {
+
+      const nameA = a.name || "";
+      const nameB = b.name || "";
+      return nameA.localeCompare(nameB);
+    }
+    if (sortBy === "employees") return (b.employees || 0) - (a.employees || 0);
+    if (sortBy === "founded") return (a.founded || 0) - (b.founded || 0);
     return 0;
   });
 
@@ -2289,7 +2589,8 @@ const CompanyManagement = () => {
 
   const handleAddCompany = async (payload) => {
     const created = await companyManagementApi.createCompany(payload);
-    setCompanies(prev => [created, ...prev]);
+    const fullCompany = { ...created, attachedDocs: payload.attachedDocs || [] };
+    setCompanies(prev => [fullCompany, ...prev]);
     setRoles(prev => {
       const next = { ...prev };
       users.forEach(u => { next[u.id] = { ...(next[u.id] || {}), [created.id]: null }; });
@@ -2317,6 +2618,7 @@ const CompanyManagement = () => {
             ...payload,
             id: editingCompany.id,
             logo: payload.logo || c.logo || payload.name.split(" ").map(x => x[0]).join("").slice(0, 2).toUpperCase(),
+            attachedDocs: payload.attachedDocs || [],
           }
           : c
       )
