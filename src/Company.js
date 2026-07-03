@@ -84,12 +84,34 @@ const buttonBase = { fontFamily: "var(--font-mono)", cursor: "pointer", letterSp
 
 
 /* -- HELPERS -------------------------------------------------- */
-const statusBadge = (s) => {
-  const map = { active: { c: "#1D9E75", bg: "#1D9E7520" }, trial: { c: "#BA7517", bg: "#BA751720" }, inactive: { c: "#5C5A56", bg: "#5C5A5620" } };
-  const { c, bg } = map[s] || map.inactive;
-  return <span style={{ background: bg, color: c, border: `1px solid ${c}30`, padding: "1px 8px", borderRadius: 2, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500 }}>{s}</span>;
-};
+// const statusBadge = (s) => {
+//   const map = { active: { c: "#1D9E75", bg: "#1D9E7520" }, trial: { c: "#BA7517", bg: "#BA751720" }, inActive: { c: "#5C5A56", bg: "#5C5A5620" } };
+//   const { c, bg } = map[s] || map.inActive;
+//   return <span style={{ background: bg, color: c, border: `1px solid ${c}30`, padding: "1px 8px", borderRadius: 2, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500 }}>{s}</span>;
+// };
+export const statusBadge = (isActive) => {
+  const color = isActive ? "#1D9E75" : "#5C5A56";
+  const bg = isActive ? "#1D9E7520" : "#5C5A5620";
+  const text = isActive ? "ACTIVE" : "INACTIVE";
 
+  return (
+    <span
+      style={{
+        background: bg,
+        color,
+        border: `1px solid ${color}30`,
+        padding: "2px 10px",
+        borderRadius: 2,
+        fontSize: 11,
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+        fontWeight: 500
+      }}
+    >
+      {text}
+    </span>
+  );
+};
 const tierBadge = (t) => {
   const map = { enterprise: { c: "#C9A252", bg: "#C9A25215" }, pro: { c: "#378ADD", bg: "#378ADD15" }, starter: { c: "#9B9590", bg: "#9B959015" } };
   const { c, bg } = map[t] || map.starter;
@@ -378,6 +400,7 @@ const sampleDocuments = [
 const COMPANY_STEPS = ["Identity", "Tax & Registration", "Documents", "Directors", "Shareholders"];
 
 const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
+  console.log("initial", initial)
   const { get, response } = useFetch({ data: [] });
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -438,7 +461,7 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
     country: "",
     employees: 0,
     status: "active",
-    tier: "starter",
+    tier: "",
     founded: new Date().getFullYear(),
     revenue: "",
     address: "",
@@ -462,6 +485,7 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
     aoaDoc: null,
     panDoc: null,
     gstDoc: null,
+    isActive: "",
     directors: [],
     shareholders: [],
     attachedDocs: [],
@@ -484,6 +508,7 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
       const fetchNestedData = async () => {
         try {
           const directorsRes = await get(api + "/companyDirectors/getAllDirectorsByCompanyActive/" + initial.id);
+          console.log("==directorsRes", directorsRes)
           let mappedDirectors = [];
 
           if (response.ok) {
@@ -498,6 +523,7 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
               leavingDate: d.leavingDate || "",
               leavingReason: d.leavingReason || "",
               otherLeavingReason: "",
+
               isNew: false
             }));
           }
@@ -538,10 +564,12 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
 
           setForm(prev => ({
             ...prev,
+            status: initial.isActive ? "active" : "inActive",
             directors: mappedDirectors,
             shareholders: mappedShareholders,
             attachedDocs: mappedDocuments
           }));
+
           setInitialCompany(initial);
           initialCompanyFields.current = {
             name: initial.name,
@@ -561,8 +589,11 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
             stateOfRegistration: initial.stateOfRegistration,
             entityType: initial.entityType,
             taxRegime: initial.taxRegime,
-            status: initial.status,
+            status: initial.isActive ? "active" : "inttactive",
+            isActive: initial.isActive,
+            tier: initial.tier
           };
+          console.log("==initialCompanyFields", initialCompanyFields)
         } catch (error) {
           console.error("Error fetching nested company data:", error);
         }
@@ -664,7 +695,8 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
         stateOfRegistration: form.stateOfRegistration,
         entityType: form.entityType,
         taxRegime: form.taxRegime,
-        isActive: form.status === "active",
+        // isActive: form.status === "active",
+        tier: form.tier
       };
       let savedCompany;
       if (initial) {
@@ -1035,6 +1067,9 @@ const AddCompanyPage = ({ onBack, onCreate, initial = null, users = [] }) => {
             <option>SEZ</option>
             <option>Exempt</option>
           </select>
+        </Field>
+        <Field label="tier">
+          <input value={form.tier} onChange={e => set("tier", e.target.value.toUpperCase())} style={inputStyle} placeholder="Tier" />
         </Field>
       </div>
     </div>,
@@ -1488,6 +1523,8 @@ const AddUserModal = ({ onClose, onCreate }) => {
 const CompanyDetailsPage = ({ company, roles, users, onBack, onEdit }) => {
   const [docs, setDocs] = useState(company.attachedDocs || []);
   const [loading, setLoading] = useState(false);
+  // company.status==="inacti"
+  console.log("==CompanyDetailsPage", company)
   useEffect(() => {
 
     if (!company.attachedDocs || company.attachedDocs.length === 0) {
@@ -1499,7 +1536,7 @@ const CompanyDetailsPage = ({ company, roles, users, onBack, onEdit }) => {
             type: d.documentType,
             name: d.fileName,
             url: d.filePath,
-            size: parseInt(d.fileSize, 10) || 0, 
+            size: parseInt(d.fileSize, 10) || 0,
             uploadedAt: d.uploadedDate,
             isNew: false,
           }));
@@ -1575,7 +1612,7 @@ const CompanyDetailsPage = ({ company, roles, users, onBack, onEdit }) => {
         <p style={{ fontSize: 9, letterSpacing: "0.22em", color: "var(--text3)", textTransform: "uppercase", marginBottom: 10 }}>Tax & Registration</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 20 }}>
           {item("CIN / Registration No.", company.cin)}{item("GST Number", company.gstNumber)}{item("PAN Number", company.panNumber)}
-          {item("TAN Number", company.tan)}{item("Tax Regime", company.taxRegime)}
+          {item("TAN Number", company.tan)}{item("Tax Regime", company.taxRegime)}{item("Tier", company.tier)}
         </div>
 
         {company.registeredAddress && (
@@ -1589,34 +1626,34 @@ const CompanyDetailsPage = ({ company, roles, users, onBack, onEdit }) => {
 
         <p style={{ fontSize: 9, letterSpacing: "0.22em", color: "var(--text3)", textTransform: "uppercase", marginBottom: 10 }}>
           {/* Attached Documents ({(company.attachedDocs || []).length}) */}
-           Attached Documents ({docs.length})
+          Attached Documents ({docs.length})
         </p>
         {/* {(!company.attachedDocs || company.attachedDocs.length === 0) ? ( */}
-         {loading ? (
+        {loading ? (
           <div style={{ border: "1px solid var(--border)", background: "var(--bg3)", padding: "16px", textAlign: "center" }}>
             <p style={{ fontSize: 11, color: "var(--text3)", fontStyle: "italic" }}>No documents attached.</p>
           </div>
-        ) : 
-        // docs.length === 0 ? 
-        (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
-            {/* {company.attachedDocs.map((doc, idx) => { */}
-            {docs.map((doc, idx) => {
-              const ext = doc.name.split(".").pop().toUpperCase();
-              const extColors = { PDF: "#D85A30", JPG: "#1D9E75", JPEG: "#1D9E75", PNG: "#378ADD", DOCX: "#C9A252", DOC: "#C9A252" };
-              const extColor = extColors[ext] || "#9B9590";
-              return (
-                <div key={idx} style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--bg3)", border: "1px solid var(--border)", padding: "10px 12px" }}>
-                  <div style={{ width: 32, height: 32, background: extColor + "18", border: `1px solid ${extColor}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, fontWeight: 700, color: extColor, flexShrink: 0 }}>{ext}</div>
-                  <div style={{ flex: 1, overflow: "hidden" }}>
-                    <p style={{ fontSize: 11, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: 2 }}>{doc.name}</p>
-                    <p style={{ fontSize: 10, color: "var(--text3)" }}>{doc.size < 1048576 ? (doc.size / 1024).toFixed(1) + " KB" : (doc.size / 1048576).toFixed(1) + " MB"}</p>
+        ) :
+          // docs.length === 0 ? 
+          (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+              {/* {company.attachedDocs.map((doc, idx) => { */}
+              {docs.map((doc, idx) => {
+                const ext = doc.name.split(".").pop().toUpperCase();
+                const extColors = { PDF: "#D85A30", JPG: "#1D9E75", JPEG: "#1D9E75", PNG: "#378ADD", DOCX: "#C9A252", DOC: "#C9A252" };
+                const extColor = extColors[ext] || "#9B9590";
+                return (
+                  <div key={idx} style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--bg3)", border: "1px solid var(--border)", padding: "10px 12px" }}>
+                    <div style={{ width: 32, height: 32, background: extColor + "18", border: `1px solid ${extColor}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, fontWeight: 700, color: extColor, flexShrink: 0 }}>{ext}</div>
+                    <div style={{ flex: 1, overflow: "hidden" }}>
+                      <p style={{ fontSize: 11, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: 2 }}>{doc.name}</p>
+                      <p style={{ fontSize: 10, color: "var(--text3)" }}>{doc.size < 1048576 ? (doc.size / 1024).toFixed(1) + " KB" : (doc.size / 1048576).toFixed(1) + " MB"}</p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
       </div>
     </div>
   );
@@ -1807,35 +1844,63 @@ const ThemeToggle = ({ theme, setTheme }) => (
   </button>
 );
 /* -- COMPANIES PAGE ------------------------------------------- */
-const CompaniesPage = ({ companies, onSelectCompany, onAddCompany, onViewCompany, onEditCompany }) => {
-  const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+const CompaniesPage = ({ companies, setCompanies, search, onSearch, onSelectCompany, onAddCompany, onViewCompany, onEditCompany }) => {
+  // const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("active");
   const [filterTier, setFilterTier] = useState("all");
   const [sortBy, setSortBy] = useState("name");
   const [view, setView] = useState("table");
+  console.log("onViewCompany", onViewCompany)
+  //   const handleSearch = async (val) => {
+  //   setSearch(val);
+  //   const results = await companyManagementApi.searchCompanies({ companyName: val });
+  //   setCompanies(results);
+  // };
+  const [activeCache, setActiveCache] = useState([]);
 
-  const filtered = companies.filter(c => {
-    const q = search.toLowerCase();
-    const compName = c.name || "";
-    const compInd = c.industry || "";
-    const compCountry = c.country || "";
-
-    const matchSearch = !q || compName.toLowerCase().includes(q) || compInd.toLowerCase().includes(q) || compCountry.toLowerCase().includes(q);
-    const matchStatus = filterStatus === "all" || c.status === filterStatus;
-    const matchTier = filterTier === "all" || c.tier === filterTier;
-
-    return matchSearch && matchStatus && matchTier;
-  }).sort((a, b) => {
-    if (sortBy === "name") {
-
-      const nameA = a.name || "";
-      const nameB = b.name || "";
-      return nameA.localeCompare(nameB);
+  useEffect(() => {
+    if (companies.length > 0 && activeCache.length === 0 && filterStatus === "active") {
+      setActiveCache(companies);
     }
-    if (sortBy === "employees") return (b.employees || 0) - (a.employees || 0);
-    if (sortBy === "founded") return (a.founded || 0) - (b.founded || 0);
-    return 0;
-  });
+  }, [companies, activeCache, filterStatus]);
+  const handleStatusChange = async (val) => {
+    setFilterStatus(val);
+
+    if (val === "active") {
+      if (setCompanies && activeCache.length > 0) {
+        setCompanies(activeCache);
+      }
+    } else if (val === "inActive") {
+      const results = await companyManagementApi.searchCompanies({ isActive: false });
+      if (setCompanies) setCompanies(results);
+    } else if (val === "all") {
+      const results = await companyManagementApi.searchCompanies({ isActive: null });
+      if (setCompanies) setCompanies(results);
+    }
+  };
+  const filtered = companies
+    .filter(c => {
+      const q = search.toLowerCase();
+      const compName = c.name || "";
+      const compCountry = c.country || "";
+
+      const matchSearch =
+        !q ||
+        compName.toLowerCase().includes(q) ||
+        compCountry.toLowerCase().includes(q);
+
+      const matchTier =
+        filterTier === "all" || c.tier === filterTier;
+
+      return matchSearch && matchTier;
+    })
+    .sort((a, b) => {
+      if (sortBy === "name") return String(a.name || "").localeCompare(String(b.name || ""));
+      if (sortBy === "country") return String(a.country || "").localeCompare(String(b.country || ""));
+      if (sortBy === "founded") return (Number(a.founded) || 0) - (Number(b.founded) || 0);
+      if (sortBy === "tier") return String(a.tier || "").localeCompare(String(b.tier || ""));
+      return 0;
+    });
 
   return (
     <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
@@ -1851,16 +1916,20 @@ const CompaniesPage = ({ companies, onSelectCompany, onAddCompany, onViewCompany
               <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.2" />
               <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
             </svg>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search companies..."
+            <input value={search} onChange={e => onSearch(e.target.value)} placeholder="Search companies..."
               style={{ width: "100%", background: "var(--bg3)", border: "1px solid var(--border2)", color: "var(--text)", padding: "8px 10px 8px 30px", fontSize: 11, outline: "none", borderRadius: 0 }} />
           </div>
-          {[{ val: filterStatus, set: setFilterStatus, opts: ["all", "active", "trial", "inactive"], label: "Status" },
-          { val: filterTier, set: setFilterTier, opts: ["all", "enterprise", "pro", "starter"], label: "Tier" },
-          { val: sortBy, set: setSortBy, opts: ["name", "employees", "founded"], label: "Sort" }
+          {[{ val: filterStatus, set: setFilterStatus, opts: ["all", "active", "inActive"], label: "Status" },
+          // { val: filterTier, set: setFilterTier, opts: ["all", "enterprise", "pro", "starter"], label: "Tier" },
+          { val: sortBy, set: setSortBy, opts: ["name", "country", "founded", "tier"], label: "Sort" }
           ].map(({ val, set, opts, label }) => (
             <select key={label} value={val} onChange={e => set(e.target.value)}
               style={{ background: "var(--bg3)", border: "1px solid var(--border2)", color: "var(--text2)", padding: "8px 10px", fontSize: 11, outline: "none", cursor: "pointer", letterSpacing: "0.05em" }}>
-              {opts.map(o => <option key={o} value={o}>{o.charAt(0).toUpperCase() + o.slice(1)}</option>)}
+              {/* {opts.map(o => <option key={o} value={o}>{o.charAt(0).toUpperCase() + o.slice(1)}</option>)} */}
+              {opts.map(o => {
+                const optLabel = o === "name" ? "Company Name" : o === "country" ? "Country Name" : o === "founded" ? "Founded Year" : o.charAt(0).toUpperCase() + o.slice(1);
+                return <option key={o} value={o}>{optLabel}</option>;
+              })}
             </select>
           ))}
           <div style={{ display: "flex", border: "1px solid var(--border)" }}>
@@ -1884,7 +1953,7 @@ const CompaniesPage = ({ companies, onSelectCompany, onAddCompany, onViewCompany
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((c, i) => (
+                {companies.map((c, i) => (
                   <tr key={c.id} style={{ borderBottom: "1px solid var(--border)", transition: "background .12s", animation: `cmFadeUp .3s ${i * 0.04}s ease both` }}
                     onMouseEnter={e => e.currentTarget.style.background = "var(--bg3)"}
                     onMouseLeave={e => e.currentTarget.style.background = ""}>
@@ -2074,7 +2143,7 @@ const CompanyRolesPage = ({ company, onBack, roles, setRoles, users, onRoleSaved
   const unassigned = users.filter(u => !roles[u.id]?.[company.id]);
 
   const handleAssign = async (userId, roleId) => {
-    await companyManagementApi.updateRole({ userId, companyId: company.id, roleId });
+    await companyManagementApi.Actions({ userId, companyId: company.id, roleId });
     setRoles(prev => ({ ...prev, [userId]: { ...prev[userId], [company.id]: roleId } }));
     const u = users.find(x => String(x.id) === String(userId));
     const r = ROLES.find(x => x.id === roleId);
@@ -2212,7 +2281,14 @@ const CompanyRolesPage = ({ company, onBack, roles, setRoles, users, onRoleSaved
         </div>
       </div>
 
-      {showPopup && <AssignMemberPopup company={company} users={users} unassigned={unassigned} onClose={() => setShowPopup(false)} onAssign={handleAssign} />}
+      {showPopup &&
+        <AssignMemberPopup
+          company={company}
+          users={users}
+          unassigned={unassigned}
+          onClose={() => setShowPopup(false)}
+          onAssign={handleAssign}
+        />}
     </div>
   );
 };
@@ -2538,6 +2614,7 @@ const CompanyManagement = () => {
   const [page, setPage] = useState("companies");
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [companies, setCompanies] = useState([]);
+  const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState({});
   const [modal, setModal] = useState(null);
@@ -2588,15 +2665,21 @@ const CompanyManagement = () => {
   };
 
   const handleAddCompany = async (payload) => {
-    const created = await companyManagementApi.createCompany(payload);
-    const fullCompany = { ...created, attachedDocs: payload.attachedDocs || [] };
-    setCompanies(prev => [fullCompany, ...prev]);
+    // const created = await companyManagementApi.createCompany(payload);
+    // const fullCompany = { ...created, attachedDocs: payload.attachedDocs || [] };
+    setCompanies(prev => [payload, ...prev]);
     setRoles(prev => {
       const next = { ...prev };
-      users.forEach(u => { next[u.id] = { ...(next[u.id] || {}), [created.id]: null }; });
+      users.forEach(u => {
+        next[u.id] = {
+          ...(next[u.id] || {}),
+          [payload.id]: null
+        };
+      });
       return next;
     });
-    showToast(created.name + " added successfully.");
+    const name = payload.name || payload.companyName;
+    showToast(`${name} added successfully.`);
   };
 
   const handleAddUser = async (payload) => {
@@ -2608,6 +2691,16 @@ const CompanyManagement = () => {
     showToast(enriched.name + " added successfully.");
   };
 
+  const handleSearch = async (val) => {
+    setSearch(val);
+    if (!val.trim()) {
+      const { companies: allCompanies } = await companyManagementApi.getBootstrap();
+      setCompanies(allCompanies);
+      return;
+    }
+    const results = await companyManagementApi.searchCompanies({ companyName: val });
+    setCompanies(results);
+  };
   // handleEditCompany: updates the companies array with the edited payload
   const handleEditCompany = async (payload) => {
     setCompanies(prev =>
@@ -2631,7 +2724,7 @@ const CompanyManagement = () => {
   const handleSelectCompany = (c) => { setSelectedCompany(c); setPage("company_roles"); };
   const handleBack = () => { setSelectedCompany(null); setPage("companies"); };
   const handleSetPage = (p) => { setPage(p); setSelectedCompany(null); };
-
+  console.log("setViewingCompany", viewingCompany)
   const renderPage = () => {
     if (loadingData) return <PlaceholderPage title="Loading Data" />;
 
@@ -2675,6 +2768,9 @@ const CompanyManagement = () => {
       return (
         <CompaniesPage
           companies={companies}
+          setCompanies={setCompanies}
+          search={search}
+          onSearch={handleSearch}
           onSelectCompany={handleSelectCompany}
           onAddCompany={() => setAddingCompany(true)}
           onViewCompany={setViewingCompany}

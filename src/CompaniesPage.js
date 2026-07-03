@@ -3,22 +3,27 @@ import { FaArrowRight } from 'react-icons/fa';
 import { INDUSTRY_COLORS, statusBadge, tierBadge, TopBar, buttonBase } from './companyManagementShared';
 
 const CompaniesPage = ({ companies, onSelectCompany, onAddCompany }) => {
-  const [search,       setSearch]       = useState("");
+  const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [filterTier,   setFilterTier]   = useState("all");
-  const [sortBy,       setSortBy]       = useState("name");
-  const [view,         setView]         = useState("table");
-
+  const [filterTier, setFilterTier] = useState("all");
+  const [sortBy, setSortBy] = useState("name");
+  const [view, setView] = useState("table");
+  // const handleSearch = async (val) => {
+  //   setSearch(val);
+  //   if (!val.trim()) return;
+  //   const results = await companyManagementApi.searchCompanies({ companyName: val });
+  //   setCompanies(results);
+  // };
   const filtered = companies.filter(c => {
     const q = search.toLowerCase();
     const matchSearch = !q || c.name.toLowerCase().includes(q) || c.industry.toLowerCase().includes(q) || c.country.toLowerCase().includes(q);
     const matchStatus = filterStatus === "all" || c.status === filterStatus;
-    const matchTier   = filterTier   === "all" || c.tier   === filterTier;
+    const matchTier = filterTier === "all" || c.tier === filterTier;
     return matchSearch && matchStatus && matchTier;
   }).sort((a, b) => {
-    if (sortBy === "name")      return a.name.localeCompare(b.name);
+    if (sortBy === "name") return a.name.localeCompare(b.name);
     if (sortBy === "employees") return b.employees - a.employees;
-    if (sortBy === "founded")   return a.founded - b.founded;
+    if (sortBy === "founded") return a.founded - b.founded;
     return 0;
   });
 
@@ -55,9 +60,9 @@ const CompaniesPage = ({ companies, onSelectCompany, onAddCompany }) => {
           </div>
 
           {[
-            { val: filterStatus, set: setFilterStatus, opts: ["all", "active", "trial", "inactive"], label: "Status" },
-            { val: filterTier,   set: setFilterTier,   opts: ["all", "enterprise", "pro", "starter"], label: "Tier" },
-            { val: sortBy,       set: setSortBy,       opts: ["name", "employees", "founded"],        label: "Sort" },
+            { val: filterStatus, set: setFilterStatus, opts: ["all", "active", "trial", "inas"], label: "Status" },
+            { val: filterTier, set: setFilterTier, opts: ["all", "enterprise", "pro", "starter"], label: "Tier" },
+            { val: sortBy, set: setSortBy, opts: ["name", "employees", "founded"], label: "Sort" },
           ].map(({ val, set, opts, label }) => (
             <select
               key={label}
@@ -72,7 +77,7 @@ const CompaniesPage = ({ companies, onSelectCompany, onAddCompany }) => {
           <div style={{ display: "flex", border: "1px solid var(--border)" }}>
             {[
               { v: "table", icon: <svg viewBox="0 0 16 16" fill="none" width="14"><rect x="1" y="1" width="14" height="14" rx="0" stroke="currentColor" strokeWidth="1.2" /><line x1="1" y1="6" x2="15" y2="6" stroke="currentColor" strokeWidth="1.2" /><line x1="1" y1="11" x2="15" y2="11" stroke="currentColor" strokeWidth="1.2" /><line x1="6" y1="1" x2="6" y2="15" stroke="currentColor" strokeWidth="1.2" /></svg> },
-              { v: "grid",  icon: <svg viewBox="0 0 16 16" fill="none" width="14"><rect x="1" y="1" width="6" height="6" stroke="currentColor" strokeWidth="1.2" /><rect x="9" y="1" width="6" height="6" stroke="currentColor" strokeWidth="1.2" /><rect x="1" y="9" width="6" height="6" stroke="currentColor" strokeWidth="1.2" /><rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="1.2" /></svg> },
+              { v: "grid", icon: <svg viewBox="0 0 16 16" fill="none" width="14"><rect x="1" y="1" width="6" height="6" stroke="currentColor" strokeWidth="1.2" /><rect x="9" y="1" width="6" height="6" stroke="currentColor" strokeWidth="1.2" /><rect x="1" y="9" width="6" height="6" stroke="currentColor" strokeWidth="1.2" /><rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="1.2" /></svg> },
             ].map(({ v, icon }) => (
               <button
                 key={v}
@@ -127,7 +132,7 @@ const CompaniesPage = ({ companies, onSelectCompany, onAddCompany }) => {
                         onClick={e => { e.stopPropagation(); onSelectCompany(c); }}
                         style={{ background: "none", border: "1px solid var(--border2)", color: "var(--gold)", padding: "5px 12px", fontSize: 10, letterSpacing: "0.12em", cursor: "pointer", fontFamily: "var(--font-mono)", transition: "all .15s", textTransform: "uppercase" }}
                         onMouseEnter={e => { e.currentTarget.style.background = "var(--gold)15"; e.currentTarget.style.borderColor = "var(--gold)"; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = "none";          e.currentTarget.style.borderColor = "var(--border2)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.borderColor = "var(--border2)"; }}
                       >
                         Members <FaArrowRight />
                       </button>

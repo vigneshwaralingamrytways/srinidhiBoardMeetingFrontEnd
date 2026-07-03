@@ -66,9 +66,9 @@ export const statusBadge = (s) => {
   const map = {
     active:   { c: "#1D9E75", bg: "#1D9E7520" },
     trial:    { c: "#BA7517", bg: "#BA751720" },
-    inactive: { c: "#5C5A56", bg: "#5C5A5620" },
+    inas: { c: "#5C5A56", bg: "#5C5A5620" },
   };
-  const { c, bg } = map[s] || map.inactive;
+  const { c, bg } = map[s] || map.inas;
   return (
     <span style={{ background: bg, color: c, border: `1px solid ${c}30`, padding: "2px 10px", borderRadius: 2, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500 }}>
       {s}

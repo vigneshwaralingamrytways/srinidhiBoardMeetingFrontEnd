@@ -94,6 +94,8 @@ const emptyKycDoc = {
   expiry: "",
   fileData: "",
   mimeType: "",
+  fileObject: null,
+  isNew: false,
 };
 
 /* -- HELPERS -------------------------------------------------- */
@@ -236,14 +238,77 @@ const DisclosureModal = ({ user, onClose, onSave, readonly = false }) => {
   const [list, setList] = useState(getDisclosures(user));
   const [form, setForm] = useState({ ...emptyDisclosure });
   const [edit, setEdit] = useState(null);
-
+  
+  useEffect(() => {
+    if (user && user.id) {
+     
+      companyManagementApi.getDisclosuresByBoardMember(user.id)
+        .then(data => {
+          const mappedData = data.map(d => ({
+            id: d.boardMemberDisclosureCompaniesId,
+            companyName: d.companyName || "",
+            position: d.position || "",
+            formerRole: d.formerRole || "",
+            currentRole: d.currentRole || "",
+            fromDate: d.fromDate || "",
+            toDate: d.toDate || "",
+            currentStatus: d.currentStatus || "Former",
+            canContact: d.canContact ? "Yes" : "No",
+            managerName: d.managerName || "",
+            managerEmail: d.managerEmail || "",
+            reasonForLeaving: d.reasonForLeave || "",
+            notes: d.notes || ""
+          }));
+          setList(mappedData);
+        })
+        .catch(err => console.error("Failed to fetch disclosures", err))
+       
+    }
+  }, [user]);
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
   const reset = () => { setForm({ ...emptyDisclosure }); setEdit(null); };
 
-  const add = () => {
+  // const add = () => {
+  //   if (!form.companyName || !form.position) return;
+  //   setList(p => edit !== null ? p.map((x, i) => i === edit ? form : x) : [{ ...form }, ...p]);
+  //   reset();
+  // };
+
+   const add = async () => {
     if (!form.companyName || !form.position) return;
-    setList(p => edit !== null ? p.map((x, i) => i === edit ? form : x) : [{ ...form }, ...p]);
-    reset();
+
+    const payload = {
+      boardMemberId: user.id,
+      companyName: form.companyName,
+      position: form.position,
+      formerRole: form.formerRole,
+      currentRole: form.currentRole,
+      fromDate: form.fromDate || null,
+      toDate: form.toDate || null,
+      currentStatus: form.currentStatus,
+      canContact: form.canContact === "Yes",
+      managerName: form.managerName,
+      managerEmail: form.managerEmail,
+      reasonForLeave: form.reasonForLeaving,
+      notes: form.notes
+    };
+
+    try {
+      if (edit !== null) {
+
+      const resup=  await companyManagementApi.updateDisclosure(edit, payload);
+       console.log("===rupdateDisclosure",resup)
+        setList(p => p.map(x => x.id === edit ? { ...form, id: edit } : x));
+      } else {
+        const created = await companyManagementApi.createDisclosure(payload);
+         console.log("createDisclosure",created)
+        setList(p => [{ ...form, id: created.boardMemberDisclosureCompaniesId }, ...p]);
+      }
+      reset();
+    } catch (error) {
+      console.error("Error saving disclosure:", error);
+      alert("Failed to save to database.");
+    }
   };
 
   const save = () => onSave(user.id, list);
@@ -256,7 +321,7 @@ const DisclosureModal = ({ user, onClose, onSave, readonly = false }) => {
           <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 420, overflow: "auto" }}>
             {list.length === 0 && <p style={{ fontSize: 12, color: "var(--text3)", fontStyle: "italic" }}>No disclosure companies added.</p>}
             {list.map((d, i) => (
-              <button key={i} onClick={() => { setForm(d); setEdit(i); }} style={{ textAlign: "left", background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text2)", padding: 12, ...buttonBase, textTransform: "none", letterSpacing: 0 }}>
+              <button key={i} onClick={() => { setForm(d); setEdit(d.id); }} style={{ textAlign: "left", background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text2)", padding: 12, ...buttonBase, textTransform: "none", letterSpacing: 0 }}>
                 <p style={{ fontSize: 12, color: "var(--text)", marginBottom: 4 }}>{d.companyName}</p>
                 <p style={{ fontSize: 10, color: "var(--text3)" }}>{d.formerRole || d.position} / {d.currentStatus}</p>
               </button>
@@ -305,11 +370,33 @@ const DisclosureModal = ({ user, onClose, onSave, readonly = false }) => {
 };
 
 const UserDetailsModal = ({ user, onClose, roles, companies }) => {
-  const profile = getProfile(user);
+  // const profile = getProfile(user);
+  const [profile, setProfile] = useState(getProfile(user));
+  useEffect(() => {
+    if (user && user.id) {
+      Promise.all([
+        companyManagementApi.getProfessionalInfoByBoardMember(user.id),
+        companyManagementApi.getKycDocumentsByBoardMember(user.id)
+      ])
+        .then(([profInfo, kycDocs]) => {
+          setProfile(prev => ({
+            ...prev,
+            professionalEntries: profInfo,
+            kycDocuments: kycDocs
+          }));
+        })
+        .catch(err => console.error("Failed to load user details", err));
+    }
+  }, [user]);
+
   const userRoles = Object.entries(roles[user.id] || {})
     .filter(([, v]) => v)
     .map(([cid, rid]) => ({ company: companies.find(c => String(c.id) === String(cid)), role: ROLES.find(r => r.id === rid) }))
     .filter(x => x.company && x.role);
+  // const userRoles = Object.entries(roles[user.id] || {})
+  //   .filter(([, v]) => v)
+  //   .map(([cid, rid]) => ({ company: companies.find(c => String(c.id) === String(cid)), role: ROLES.find(r => r.id === rid) }))
+  //   .filter(x => x.company && x.role);
 
   const item = (label, value) => (
     <div style={{ border: "1px solid var(--border)", background: "var(--bg3)", padding: "8px 10px", minHeight: 54 }}>
@@ -550,7 +637,136 @@ const AddMemberPage = ({ onBack, onCreate, onUpdate, user, theme, setTheme }) =>
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const initialBoardMemberRef = useRef(null);
+  const initialProfessionalRef = useRef([]);
+  const initialKycRef = useRef([]);
+  const initialProfileRef = useRef(null);
+  const [form, setForm] = useState(
+    isEdit
+      ? {
+        name: user.name,
+        email: user.email,
+        username: user.username || "",
+        password: user.password || "",
+        department: user.department,
+        avatar: user.avatar || "",
+        img: user.img || "",
+        profile: {
+          ...emptyProfile,
+          ...getProfile(user),
+          professionalEntries: [],
+          kycDocuments: []
+        },
+        toDeleteProf: [],
+        toDeleteKyc: []
+      }
+      : {
+        name: "",
+        email: "",
+        username: "",
+        password: "",
+        department: "",
+        avatar: "",
+        img: "",
+        profile: {
+          ...emptyProfile,
+          professionalEntries: [],
+          kycDocuments: []
+        },
+        toDeleteProf: [],
+        toDeleteKyc: []
+      }
+  );
+  useEffect(() => {
+    if (isEdit && user.id) {
+      console.log("user ===", user)
+      const fetchRelatedData = async () => {
+        try {
+          const profInfo = await companyManagementApi.getProfessionalInfoByBoardMember(user.id);
+          console.log("===profInfo", profInfo)
+          const mappedProf = profInfo.map(p => ({
+            ...p,
+            id: p.id || p.boardMemberProfessionalInfoId,
+            companyName: p.companyName || "",
+            designation: p.designation || "",
+            sharesHeld: p.noOfShares || p.sharesHeld || "",
+            sharePercentage: p.holdingPercentage || p.sharePercentage || "",
+            isNew: false
+          }));
+          console.log("==mappedProf", mappedProf)
+          initialProfessionalRef.current = mappedProf;
 
+          const kycDocs = await companyManagementApi.getKycDocumentsByBoardMember(user.id);
+          console.log("kycdocs", kycDocs)
+          const mappedKyc = kycDocs.map(k => ({
+            ...k,
+            id: k.id || k.boardMemberKycDocumentsId,
+            name: k.documentName || k.name || '',
+            type: k.idType || k.type || '',
+            idNumber: k.idNumber || '',
+            expiry: k.expiryDate || k.expiry || '',
+            fileData: k.fileData || k.extention || '',
+            mimeType: k.mimeType || '',
+            // fileObject: null,
+            isNew: false
+          }));
+          console.log("==mappedKyc", mappedKyc)
+          initialKycRef.current = mappedKyc;
+          setForm(prev => ({
+            ...prev,
+            profile: {
+              ...prev.profile,
+              professionalEntries: mappedProf,
+              kycDocuments: mappedKyc
+            }
+          }));
+
+          initialBoardMemberRef.current = {
+            name: user.name,
+            email: user.email,
+            username: user.username || "",
+            password: user.password || "",
+            department: user.department,
+            avatar: user.avatar || "",
+            img: user.img || "",
+            phone: user.profile?.phone || "",
+            dateOfBirth: user.profile?.dateOfBirth || "",
+            gender: user.profile?.gender || "",
+            nationality: user.profile?.nationality || "",
+            passportId: user.profile?.passportId || "",
+            emergencyContact: user.profile?.emergencyContact || "",
+            residentialAddress: user.profile?.residentialAddress || "",
+            mailingAddress: user.profile?.mailingAddress || ""
+          };
+          const profileData = await companyManagementApi.getBoardMemberProfile(user.id);
+          let photoUrl = user.img || "";
+          let sigUrl = user.profile?.signature || "";
+
+          if (profileData && profileData.length > 0) {
+            initialProfileRef.current = profileData;
+            const pDoc = profileData.find(p => p.documentType === "Profile Photo");
+            const sDoc = profileData.find(p => p.documentType === "Signature");
+
+            if (pDoc) photoUrl = pDoc.fileUrl || pDoc.filePath;
+            if (sDoc) sigUrl = sDoc.fileUrl || sDoc.filePath;
+          }
+          setForm(prev => ({
+            ...prev,
+            img: photoUrl,
+            profile: {
+              ...prev.profile,
+              signature: sigUrl,
+              professionalEntries: mappedProf,
+              kycDocuments: mappedKyc
+            }
+          }));
+        } catch (err) {
+          setError("Failed to load existing member data.");
+        }
+      };
+      fetchRelatedData();
+    }
+  }, [isEdit, user]);
   // Professional state
   const [profForm, setProfForm] = useState({ ...emptyProfEntry });
   const [profEdit, setProfEdit] = useState(null);
@@ -566,35 +782,6 @@ const AddMemberPage = ({ onBack, onCreate, onUpdate, user, theme, setTheme }) =>
   const [kycEdit, setKycEdit] = useState(null);
   const [viewKycDoc, setViewKycDoc] = useState(null);
 
-  const [form, setForm] = useState(
-    isEdit
-      ? {
-        name: user.name,
-        email: user.email,
-        username: user.username || "",
-        password: user.password || "",
-        department: user.department,
-        avatar: user.avatar || "",
-        img: user.img || "",
-        profile: {
-          ...emptyProfile,
-          ...getProfile(user),
-        },
-      }
-      : {
-        name: "",
-        email: "",
-        username: "",
-        password: "",
-        department: "Operations",
-        avatar: "",
-        img: "",
-        profile: {
-          ...emptyProfile,
-        },
-      }
-  );
-
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
   const setProfile = (k, v) => setForm(p => ({ ...p, profile: { ...p.profile, [k]: v } }));
 
@@ -604,16 +791,30 @@ const AddMemberPage = ({ onBack, onCreate, onUpdate, user, theme, setTheme }) =>
     if (!profForm.companyName || !profForm.designation) return;
     setForm(prev => {
       const entries = prev.profile.professionalEntries || [];
+      const entryToSave = { ...profForm, isNew: profEdit === null ? true : profForm.isNew };
       const updated = profEdit !== null
-        ? entries.map((item, idx) => idx === profEdit ? { ...profForm } : item)
-        : [...entries, { ...profForm }];
+        ? entries.map((item, idx) => idx === profEdit ? entryToSave : item)
+        : [...entries, entryToSave];
       return { ...prev, profile: { ...prev.profile, professionalEntries: updated } };
     });
     resetProfForm();
     setShowProfessionalModal(false);
   };
   const removeProfEntry = idx => {
-    setForm(p => ({ ...p, profile: { ...p.profile, professionalEntries: (p.profile.professionalEntries || []).filter((_, i) => i !== idx) } }));
+    setForm(p => {
+      console.log("ppp", p)
+      const entry = (p.profile.professionalEntries || [])[idx];
+      console.log("Entry to remove:", entry);
+      console.log("ID present:", entry.id);
+      return {
+        ...p,
+        profile: {
+          ...p.profile,
+          professionalEntries: (p.profile.professionalEntries || []).filter((_, i) => i !== idx)
+        },
+        toDeleteProf: entry && entry.id && !entry.isNew ? [...(p.toDeleteProf || []), entry.id] : (p.toDeleteProf || [])
+      };
+    });
     resetProfForm();
   };
 
@@ -641,28 +842,188 @@ const AddMemberPage = ({ onBack, onCreate, onUpdate, user, theme, setTheme }) =>
     if (!kycForm.name && !kycForm.type) return;
     setForm(prev => {
       const docs = prev.profile.kycDocuments || [];
-      const entry = { ...kycForm, id: kycForm.id || String(Date.now()) };
+      const entryToSave = { ...kycForm, id: kycForm.id || String(Date.now()), isNew: kycEdit === null ? true : kycForm.isNew };
       const updated = kycEdit !== null
-        ? docs.map((d, i) => i === kycEdit ? entry : d)
-        : [...docs, entry];
+        ? docs.map((d, i) => i === kycEdit ? entryToSave : d)
+        : [...docs, entryToSave];
       return { ...prev, profile: { ...prev.profile, kycDocuments: updated } };
     });
     resetKycForm();
   };
   const removeKycDoc = idx => {
-    setForm(prev => ({ ...prev, profile: { ...prev.profile, kycDocuments: (prev.profile.kycDocuments || []).filter((_, i) => i !== idx) } }));
+    setForm(prev => {
+      const doc = (prev.profile.kycDocuments || [])[idx];
+      return {
+        ...prev,
+        profile: {
+          ...prev.profile,
+          kycDocuments: (prev.profile.kycDocuments || []).filter((_, i) => i !== idx)
+        },
+        toDeleteKyc: doc && doc.id && !doc.isNew ? [...(prev.toDeleteKyc || []), doc.id] : (prev.toDeleteKyc || [])
+      };
+    });
     if (kycEdit === idx) resetKycForm();
   };
 
   const next = () => { setError(""); setStep(s => s + 1); };
 
+  // const submit = async () => {
+  //   setSaving(true); setError("");
+  //   if (isEdit) { await onUpdate(user.id, form); }
+  //   else { await onCreate(form); }
+  //   setSaving(false);
+  // };
   const submit = async () => {
-    setSaving(true); setError("");
-    if (isEdit) { await onUpdate(user.id, form); }
-    else { await onCreate(form); }
-    setSaving(false);
-  };
+    setSaving(true);
+    setError("");
+    try {
+      const boardMemberPayload = {
+        boardMemberName: form.name,
+        avatar: form.avatar || form.name.split(' ').map(x => x[0]).join('').slice(0, 2).toUpperCase(),
+        emailAddress: form.email,
+        contactNumber: form.profile.contactNo || '',
+        designation: form.department,
+        education: form.profile.education || '',
+        experience: form.profile.experience || '',
+        userName: form.username || '',
+        password: form.password || '',
+        dateOfBirth: form.profile.dateOfBirth || null,
+        gender: form.profile.gender || '',
+        nationality: form.profile.nationality || '',
+        din: form.profile.passportId || '',
+        phone: form.profile.phone || '',
+        emergencyContact: form.profile.emergencyContact || '',
+        residentialAddress: form.profile.residentialAddress || '',
+        preferredMailingAddress: form.profile.mailingAddress || '',
+        isActive: true,
+      };
 
+      let savedBoardMember;
+
+      if (isEdit) {
+        const hasChanges = initialBoardMemberRef.current
+          ? Object.keys(initialBoardMemberRef.current).some(key => {
+            if (key in form) return form[key] !== initialBoardMemberRef.current[key];
+            if (key in form.profile) return form.profile[key] !== initialBoardMemberRef.current[key];
+            return false;
+          })
+          : true;
+
+        if (hasChanges) {
+          savedBoardMember = await companyManagementApi.updateBoardMember(user.id, boardMemberPayload);
+        } else {
+          savedBoardMember = user;
+        }
+      } else {
+        savedBoardMember = await companyManagementApi.createBoardMember(boardMemberPayload);
+      }
+
+      const boardMemberId = savedBoardMember.id || savedBoardMember.boardMemberId;
+
+      const existingProfiles = Array.isArray(initialProfileRef.current) ? initialProfileRef.current : [];
+      const photoDoc = existingProfiles.find(p => p.documentType === "Profile Photo");
+      const sigDoc = existingProfiles.find(p => p.documentType === "Signature");
+
+      if (form.img && form.img.startsWith("data:")) {
+        const photoBlob = await (await fetch(form.img)).blob();
+        const photoFile = new File([photoBlob], "profile_photo.png", { type: photoBlob.type });
+
+        if (photoDoc) {
+          await companyManagementApi.updateBoardMemberProfile(photoDoc.boardMemberProfileId || photoDoc.id, boardMemberId, "Profile Photo", photoFile);
+        } else {
+          await companyManagementApi.createBoardMemberProfile(boardMemberId, "Profile Photo", photoFile);
+        }
+      } else if (!form.img && photoDoc) {
+        await companyManagementApi.deleteBoardMemberProfile(photoDoc.boardMemberProfileId || photoDoc.id);
+      }
+
+      if (form.profile.signature && form.profile.signature.startsWith("data:")) {
+        const sigBlob = await (await fetch(form.profile.signature)).blob();
+        const sigFile = new File([sigBlob], "signature.png", { type: sigBlob.type });
+
+        if (sigDoc) {
+          await companyManagementApi.updateBoardMemberProfile(sigDoc.boardMemberProfileId || sigDoc.id, boardMemberId, "Signature", sigFile);
+        } else {
+          await companyManagementApi.createBoardMemberProfile(boardMemberId, "Signature", sigFile);
+        }
+      } else if (!form.profile.signature && sigDoc) {
+        await companyManagementApi.deleteBoardMemberProfile(sigDoc.boardMemberProfileId || sigDoc.id);
+      }
+      for (const id of (form.toDeleteProf || [])) {
+        await companyManagementApi.deleteProfessionalInfo(id);
+      }
+      for (const id of (form.toDeleteKyc || [])) {
+        await companyManagementApi.deleteKycDocument(id);
+      }
+
+      for (const prof of form.profile.professionalEntries) {
+        const payload = {
+          boardMemberId: boardMemberId,
+          companyName: prof.companyName,
+          designation: prof.designation,
+          noOfShares: prof.sharesHeld,
+          holdingPercentage: prof.sharePercentage
+        };
+
+        if (prof.id && !prof.isNew) {
+          const initial = initialProfessionalRef.current.find(p => p.id === prof.id);
+          if (initial) {
+            const hasChanged = Object.keys(initial).some(key => prof[key] !== initial[key]);
+            if (hasChanged) {
+              await companyManagementApi.updateProfessionalInfo(prof.id, payload);
+            }
+          }
+        } else {
+          await companyManagementApi.createProfessionalInfo(payload);
+        }
+      }
+
+      for (const doc of form.profile.kycDocuments) {
+        if (doc.isNew && doc.fileData) {
+          await companyManagementApi.uploadKycDocument(
+            boardMemberId,
+            doc.name,
+            doc.type,
+            doc.idNumber,
+            doc.expiry,
+            doc.fileObject);
+        }
+        else if (doc.id && !doc.isNew) {
+          const initial = initialKycRef.current.find(d => d.id === doc.id);
+          if (initial) {
+            const hasChanged = Object.keys(initial).some(key => doc[key] !== initial[key]);
+            const hasNewFile = doc.fileObject && doc.fileObject !== initial.fileObject;
+            if (hasChanged || hasNewFile) {
+              await companyManagementApi.updateKycDocument(doc.id,
+                boardMemberId,
+                doc.name,
+                doc.type,
+                doc.idNumber,
+                doc.expiry,
+                hasNewFile ? doc.fileObject : null,
+                null
+              );
+            }
+          }
+        }
+      }
+
+      setSaving(false);
+      // if (isEdit) {
+      //   onUpdate(user.id, { ...boardMemberPayload, profile: { ...form.profile } });
+      // } else {
+      //   onCreate({ ...boardMemberPayload, profile: { ...form.profile } });
+      // }
+      if (isEdit) {
+        onUpdate(user.id, { ...boardMemberPayload, profile: { ...form.profile }, img: form.img });
+      } else {
+        onCreate({ ...boardMemberPayload, profile: { ...form.profile }, img: form.img, id: boardMemberId });
+      }
+    } catch (err) {
+      setError(err.message || "Failed to save Board Member");
+      setSaving(false);
+    }
+  };
   const stepContent = [
 
     /* -- Step 1  Basic Info -- */
@@ -1011,7 +1372,7 @@ const AddMemberPage = ({ onBack, onCreate, onUpdate, user, theme, setTheme }) =>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
                       <p style={{ fontSize: 11, color: "var(--text2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{kycForm.name || "Uploaded file"}</p>
                       <button
-                        onClick={() => setKycForm(p => ({ ...p, fileData: "", mimeType: "" }))}
+                        onClick={() => setKycForm(p => ({ ...p, name: "", fileData: "", mimeType: "", fileObject: null }))}
                         style={{ background: "transparent", border: "1px solid var(--border2)", color: "var(--text3)", padding: "4px 9px", fontSize: 10, cursor: "pointer", flexShrink: 0, ...buttonBase }}
                       >
                         Remove
@@ -1041,6 +1402,7 @@ const AddMemberPage = ({ onBack, onCreate, onUpdate, user, theme, setTheme }) =>
                     reader.onload = ev => setKycForm(p => ({
                       ...p,
                       fileData: ev.target.result,
+                      fileObject: file,
                       name: p.name || file.name,
                       mimeType: file.type,
                     }));
@@ -1236,6 +1598,7 @@ const UserProfilesPage = ({ users, roles, companies, onViewProfile, onEditMember
               </div>
 
               <div style={{ borderTop: "1px solid var(--border)", paddingTop: 14 }}>
+                {console.log("profile.professionalEntries ,", profile.professionalEntries)}
                 <p style={{ fontSize: 9, letterSpacing: "0.2em", color: "var(--text3)", textTransform: "uppercase", marginBottom: 10 }}>
                   Experience ({(profile.professionalEntries || []).length})
                 </p>
@@ -1247,7 +1610,7 @@ const UserProfilesPage = ({ users, roles, companies, onViewProfile, onEditMember
                       <div key={ei} style={{ background: "var(--bg4,var(--bg))", border: "1px solid var(--border)", padding: "9px 11px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
                           <div style={{ overflow: "hidden" }}>
-                            <p style={{ fontSize: 12, color: "var(--text)", fontWeight: 500, marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{entry.designation || ""}</p>
+                            <p style={{ fontSize: 12, color: "var(--text)", fontWeight: 500, marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{entry.designation || ""}</p>
                             <p style={{ fontSize: 11, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{entry.companyName || "Not provided"}</p>
                           </div>
                           <div style={{ flexShrink: 0, textAlign: "right" }}>
@@ -1305,65 +1668,140 @@ const MemberProfile = () => {
   const [disclosureUser, setDisclosureUser] = useState(null);
   const [theme, setTheme] = useState("dark");
 
+  // useEffect(() => {
+  //   let active = true;
+  //   companyManagementApi.getBootstrap().then(({ companies: apiCompanies, users: apiUsers, roleAssignments }) => {
+  //     if (!active) return;
+  //     setCompanies(apiCompanies);
+  //     setUsers(apiUsers);
+  //     setRoles(buildRoleAssignments(apiUsers, apiCompanies, roleAssignments));
+  //     setLoadingData(false);
+  //   });
+  //   return () => { active = false; };
+  // }, []);
+  const enrichBoardMembers = async (boardMembers) => {
+    return await Promise.all(
+      boardMembers.map(async (user) => {
+        try {
+          const [profInfo, kycDocs] = await Promise.all([
+            companyManagementApi.getProfessionalInfoByBoardMember(user.id),
+            companyManagementApi.getKycDocumentsByBoardMember(user.id),
+          ]);
+
+          const mappedProf = profInfo.map(p => ({
+            ...p,
+            id: p.id || p.boardMemberProfessionalInfoId,
+            companyName: p.companyName || "",
+            designation: p.designation || "",
+            sharesHeld: p.noOfShares || p.sharesHeld || "",
+            sharePercentage: p.holdingPercentage || p.sharePercentage || "",
+            isNew: false,
+          }));
+
+          const mappedKyc = kycDocs.map(k => ({
+            ...k,
+            id: k.id || k.boardMemberKycDocumentsId,
+            name: k.documentName || k.name || '',
+            type: k.idType || k.type || '',
+            idNumber: k.idNumber || '',
+            expiry: k.expiryDate || k.expiry || '',
+            fileData: k.fileData || k.extention || '',
+            mimeType: k.mimeType || '',
+            isNew: false,
+          }));
+
+          return {
+            ...user,
+            profile: {
+              ...getProfile(user),
+              professionalEntries: mappedProf,
+              kycDocuments: mappedKyc,
+            },
+          };
+        } catch (err) {
+          console.error(`Failed to load details for user ${user.id}`, err);
+          return user;
+        }
+      })
+    );
+  };
   useEffect(() => {
     let active = true;
-    companyManagementApi.getBootstrap().then(({ companies: apiCompanies, users: apiUsers, roleAssignments }) => {
-      if (!active) return;
-      setCompanies(apiCompanies);
-      setUsers(apiUsers);
-      setRoles(buildRoleAssignments(apiUsers, apiCompanies, roleAssignments));
-      setLoadingData(false);
-    });
+    const loadBoardMembers = async () => {
+      try {
+        const boardMembers = await companyManagementApi.getAllBoardMembers();
+        if (!active) return;
+        const enriched = await enrichBoardMembers(boardMembers);
+        setUsers(enriched);
+        setCompanies([]);
+        setRoles({});
+        setLoadingData(false);
+      } catch (error) {
+        console.error("Failed to load board members:", error);
+        setLoadingData(false);
+      }
+    };
+    loadBoardMembers();
     return () => { active = false; };
   }, []);
-
   const showToast = message => { setToast(message); window.setTimeout(() => setToast(""), 2600); };
 
-  const handleUpdateUser = async (userId, payload) => {
-    const avatar = payload.avatar || payload.name.split(" ").map(x => x[0]).join("").slice(0, 2).toUpperCase();
-    const updated = await companyManagementApi.updateUser(userId, { ...payload, avatar });
-    setUsers(prev => prev.map(u => u.id === userId ? {
-      ...u,
-      ...updated,
-      name: payload.name,
-      email: payload.email,
-      username: payload.username,
-      password: payload.password,
-      department: payload.department,
-      avatar,
-      img: payload.img || "",
-      profile: { ...emptyProfile, ...payload.profile },
-      disclosures: u.disclosures || [],
-    } : u));
-    setViewUser(null); setEditingUser(null); setAddingUser(false);
-    showToast(payload.name + " updated successfully.");
+  // const handleUpdateUser = async (userId, payload) => {
+  //   const avatar = payload.avatar || payload.name.split(" ").map(x => x[0]).join("").slice(0, 2).toUpperCase();
+  //   const updated = await companyManagementApi.updateUser(userId, { ...payload, avatar });
+  //   setUsers(prev => prev.map(u => u.id === userId ? {
+  //     ...u,
+  //     ...updated,
+  //     name: payload.name,
+  //     email: payload.email,
+  //     username: payload.username,
+  //     password: payload.password,
+  //     department: payload.department,
+  //     avatar,
+  //     img: payload.img || "",
+  //     profile: { ...emptyProfile, ...payload.profile },
+  //     disclosures: u.disclosures || [],
+  //   } : u));
+  //   setViewUser(null); setEditingUser(null); setAddingUser(false);
+  //   showToast(payload.name + " updated successfully.");
+  // };
+  const handleUpdateUser = (userId, payload) => {
+    console.log("handleUpdateUser", userId, payload)
+    setUsers(prev => prev.map(u => u.id === userId ? payload : u));
+    setEditingUser(null);
+    setViewUser(null);
+    showToast(`${payload.boardMemberName} updated successfully.`);
   };
-
   const handleSaveDisclosure = (userId, disclosures) => {
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, disclosures } : u));
     setDisclosureUser(null);
     showToast("Disclosure details updated successfully.");
   };
 
-  const handleAddUser = async payload => {
-    const avatar = payload.avatar || payload.name.split(" ").map(x => x[0]).join("").slice(0, 2).toUpperCase();
-    const created = await companyManagementApi.createUser({ name: payload.name, email: payload.email, department: payload.department, avatar });
-    const enriched = {
-      ...created,
-      name: payload.name,
-      email: payload.email,
-      username: payload.username,
-      password: payload.password,
-      department: payload.department,
-      avatar,
-      img: payload.img || "",
-      profile: payload.profile,
-      disclosures: [],
-    };
-    setUsers(prev => [enriched, ...prev]);
-    setRoles(prev => ({ ...prev, [enriched.id]: Object.fromEntries(companies.map(c => [c.id, null])) }));
+  // const handleAddUser = async payload => {
+  //   const avatar = payload.avatar || payload.name.split(" ").map(x => x[0]).join("").slice(0, 2).toUpperCase();
+  //   const created = await companyManagementApi.createUser({ name: payload.name, email: payload.email, department: payload.department, avatar });
+  //   const enriched = {
+  //     ...created,
+  //     name: payload.name,
+  //     email: payload.email,
+  //     username: payload.username,
+  //     password: payload.password,
+  //     department: payload.department,
+  //     avatar,
+  //     img: payload.img || "",
+  //     profile: payload.profile,
+  //     disclosures: [],
+  //   };
+  //   setUsers(prev => [enriched, ...prev]);
+  //   setRoles(prev => ({ ...prev, [enriched.id]: Object.fromEntries(companies.map(c => [c.id, null])) }));
+  //   setAddingUser(false);
+  //   showToast(enriched.name + " added successfully.");
+  // };
+  const handleAddUser = (payload) => {
+    setUsers(prev => [payload, ...prev]);
     setAddingUser(false);
-    showToast(enriched.name + " added successfully.");
+    showToast(`${payload.name} added successfully.`);
   };
 
   if (loadingData) {
